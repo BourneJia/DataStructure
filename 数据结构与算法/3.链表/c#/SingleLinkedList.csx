@@ -131,25 +131,27 @@ public class SingleLinkedList<T>{
     }
 
     if(index == 0){
+
       mFirst = mFirst.Next;
       mLenght--;
+    
     } else if (index == Length-1){
       var currentNode = mFirst;
+      
       while(currentNode.Next != null && currentNode.Next != mLast)
         currentNode = currentNode.Next;
+      
       currentNode.Next = null;
       mLast = currentNode;
       mLenght--;
+    
     } else {
       int i = 0;
       var currentNode = mFirst;
-      while (currentNode.Next != null)
-      {
-          if (i + 1 == index)
-          {
+    
+      while (currentNode.Next != null){
+          if (i + 1 == index){
               currentNode.Next = currentNode.Next.Next;
-
-              // Decrement the count.
               mLenght--;
               break;
           }
@@ -161,8 +163,26 @@ public class SingleLinkedList<T>{
     return isSuccess;
   }
 
-  public SingleLinkedNode<T> Find(int index){
-    return null;
+  public T Find(int index){
+    if(isEmpty() || index < 0 || index >= Length){
+      Console.WriteLine("index 不在规定范围内");
+      throw new IndexOutOfRangeException();
+    }
+
+    if(index == 0){
+      return mFirst.Data;
+    }
+    if(index == (Length - 1)){
+      return mLast.Data;
+    }
+    if(index > 0 && index < (Length-1)){
+      var currentNode = mFirst;
+      for(int i = 0; i > index; i++)
+        currentNode = currentNode.Next;
+      return currentNode.Data;
+    }
+
+    throw new IndexOutOfRangeException();
   }
 
   public void Clear(){
