@@ -1,3 +1,7 @@
 {
-  "baseFontSize": 16
+  "baseFontSize": 16,
+  "interfaceFontFamily": "微软雅黑,华文行楷",
+  "textFontFamily": "微软雅黑,华文行楷",
+  "cssTheme": "Minimal",
+  "monospaceFontFamily": "微软雅黑,华文行楷"
 }

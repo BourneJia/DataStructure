@@ -1,7 +1,5 @@
 using System;
 
-Print("Hello world");
-
 Array<int> a = new Array<int>(10);
 a.Insert(0,1);
 a.Insert(1,2);
@@ -98,10 +96,6 @@ public class Array<T> where T : IComparable<T> {
 
     public void PrintAll(){
       for(int i = 0; i < mLength; i++){
-        // Debug.Print("mData["+i+"]");
-        // Debug.Print("/n");
-        // Debug.Print(mData[i].ToString()); 
-        // Debug.Print("/n");
         Console.WriteLine("mData["+i+"]");
         Console.WriteLine(mData[i].ToString());
       }
