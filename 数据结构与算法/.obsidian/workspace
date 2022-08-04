@@ -4,32 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "380c866f1d75c711",
+        "id": "bc583d19214cf513",
         "type": "leaf",
-        "dimension": 87.32572877059569,
         "state": {
           "type": "markdown",
           "state": {
-            "file": "3.链表/链表基础概念.md",
+            "file": "4.栈/栈的基本概念.md",
             "mode": "source",
             "source": false
           }
-        },
-        "group": "1663bbd0e9fa4ba3"
-      },
-      {
-        "id": "277770bdeeb58a18",
-        "type": "leaf",
-        "dimension": 12.67427122940431,
-        "state": {
-          "type": "markdown",
-          "state": {
-            "file": "3.链表/链表基础概念.md",
-            "mode": "source",
-            "source": false
-          }
-        },
-        "group": "1663bbd0e9fa4ba3"
+        }
       }
     ],
     "direction": "vertical"
@@ -69,7 +53,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 291
   },
   "right": {
     "id": "4acbedb9faa33eaf",
@@ -85,7 +69,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "3.链表/链表基础概念.md",
+                "file": "4.栈/栈的基本概念.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,17 +87,17 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "380c866f1d75c711",
+  "active": "bc583d19214cf513",
   "lastOpenFiles": [
-    "3.链表/Drawing 2022-08-03 15.29.33.excalidraw.md",
-    "Excalidraw/Drawing 2022-08-02 21.10.14.excalidraw.md",
-    "3.链表/链表基础概念.md",
-    "Excalidraw/双向链表.excalidraw.md",
-    "Excalidraw/循环链表.excalidraw.md",
-    "Excalidraw/单链表.excalidraw.md",
-    "Excalidraw/链表的插入与删除.excalidraw.md",
     "2.数组/数组基础概念.md",
+    "4.栈/栈的基本概念.md",
+    "Excalidraw/单链表.excalidraw.md",
+    "Excalidraw/单链表的详细插入图解.excalidraw.md",
+    "单链表的详细插入方法.excalidraw.excalidraw.md",
+    "Excalidraw/栈结构.excalidraw.md",
+    "3.链表/链表基础概念.md",
     "Excalidraw/数组与链表区别图.excalidraw.md",
-    "1.复杂度分析/复杂度分析.md"
+    "Excalidraw/链表的插入与删除.excalidraw.md",
+    "Excalidraw/单链表删除功能.excalidraw.md"
   ]
 }

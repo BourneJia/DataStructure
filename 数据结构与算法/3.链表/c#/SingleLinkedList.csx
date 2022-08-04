@@ -1,6 +1,30 @@
 using System;
 
 
+SingleLinkedList<int> a = new SingleLinkedList<int>();
+
+a.Insert(0,0);
+a.Insert(1,1);
+a.Insert(2,2);
+a.Insert(3,3);
+a.Insert(4,4);
+a.Insert(5,5);
+a.Insert(6,6);
+a.Insert(7,7);
+a.Insert(8,8);
+
+// Print("第五位数为：");
+Print(a.Find(7));
+Print("删除前的长度：");
+Print(a.Length);
+
+// Print("删除第五位数");
+a.Delete(7);
+Print("删除后的长度");
+Print(a.Length);
+// Print("删除后的第五位数为：");
+Print(a.Find(7));
+
 /**
 描述：链表结点类
 mData：自身数据
@@ -116,7 +140,7 @@ public class SingleLinkedList<T>{
 
       mLenght++;
     } else {
-      Conosle.WriteLine("index 不在规定范围内");
+      Console.WriteLine("index 不在规定范围内");
       isSuccess = false;
     }
     return isSuccess;
@@ -148,16 +172,27 @@ public class SingleLinkedList<T>{
     } else {
       int i = 0;
       var currentNode = mFirst;
-    
+
+      //这样的好处是防止中间断层，其余方面暂时没有想到相比下方的foreach语法特性有其它优势
       while (currentNode.Next != null){
-          if (i + 1 == index){
-              currentNode.Next = currentNode.Next.Next;
-              mLenght--;
-              break;
-          }
-          ++i;
-          currentNode = currentNode.Next;
+        if (i + 1 == index){
+          currentNode.Next = currentNode.Next.Next;
+          mLenght--;
+          break;
+        }
+        i++;
+        currentNode = currentNode.Next;
       }
+
+      // for(int j = 0; j < index; j++){
+      //   if (j == (index-1)){
+      //     currentNode.Next = currentNode.Next.Next;
+      //     mLenght--;
+      //     break;
+      //   }
+
+      //   currentNode = currentNode.Next;
+      // }
     } 
 
     return isSuccess;
@@ -177,7 +212,7 @@ public class SingleLinkedList<T>{
     }
     if(index > 0 && index < (Length-1)){
       var currentNode = mFirst;
-      for(int i = 0; i > index; i++)
+      for(int i = 0; i < index; i++)
         currentNode = currentNode.Next;
       return currentNode.Data;
     }

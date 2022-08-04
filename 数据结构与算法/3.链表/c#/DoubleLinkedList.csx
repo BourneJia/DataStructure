@@ -1,5 +1,30 @@
 using System;
 
+DoubleLinkedList<int> a = new DoubleLinkedList<int>(); 
+
+a.Insert(0,0);
+a.Insert(1,1);
+a.Insert(2,2);
+a.Insert(3,3);
+a.Insert(4,4);
+a.Insert(5,5);
+a.Insert(6,6);
+a.Insert(7,7);
+a.Insert(8,8);
+
+// Print("第五位数为：");
+Print(a.GetElement(7));
+Print("删除前的长度：");
+Print(a.Count);
+
+// Print("删除第五位数");
+a.Delete(7);
+Print("删除后的长度");
+Print(a.Count);
+// Print("删除后的第五位数为：");
+Print(a.GetElement(7));
+
+
 public class DoubleLinkedNode<T>{
   private T mData;
   private DoubleLinkedNode<T> mNext;
