@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "4.栈/栈的基本概念.md",
+            "file": "7.跳表/跳表基本概念.md",
             "mode": "source",
             "source": false
           }
@@ -69,7 +69,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "4.栈/栈的基本概念.md",
+                "file": "7.跳表/跳表基本概念.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -79,25 +79,34 @@
                 "unlinkedCollapsed": true
               }
             }
+          },
+          {
+            "id": "3ca81477f61e264b",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {}
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 300,
+    "width": 234.5,
     "collapsed": true
   },
   "active": "bc583d19214cf513",
   "lastOpenFiles": [
-    "2.数组/数组基础概念.md",
     "4.栈/栈的基本概念.md",
-    "Excalidraw/单链表.excalidraw.md",
-    "Excalidraw/单链表的详细插入图解.excalidraw.md",
-    "单链表的详细插入方法.excalidraw.excalidraw.md",
-    "Excalidraw/栈结构.excalidraw.md",
-    "3.链表/链表基础概念.md",
-    "Excalidraw/数组与链表区别图.excalidraw.md",
-    "Excalidraw/链表的插入与删除.excalidraw.md",
-    "Excalidraw/单链表删除功能.excalidraw.md"
+    "6.队列/队列基本概念.md",
+    "7.跳表/跳表基本概念.md",
+    "Excalidraw/跳表随机动态更新.excalidraw.md",
+    "Excalidraw/跳表插入与删除图解.excalidraw.md",
+    "Excalidraw/跳变遍历次数图.excalidraw.md",
+    "Excalidraw/循环链表.excalidraw.md",
+    "Excalidraw/跳表索引类推.excalidraw.md",
+    "Excalidraw/跳表结构.excalidraw.md",
+    "Excalidraw/跳表动态更新理由.excalidraw.md"
   ]
 }

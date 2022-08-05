@@ -35,6 +35,8 @@ public class Stack<T>{
   public T Pop(){
     if(mCount > 0){
       var top = Top;
+      //释放Pop 出的内容
+      mData[mCount] = default(T);
       mCount--;
       return top;
     }

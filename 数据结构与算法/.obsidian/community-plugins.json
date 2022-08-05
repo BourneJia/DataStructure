@@ -1,4 +1,7 @@
 [
   "obsidian-excalidraw-plugin",
-  "obsidian-emoji-toolbar"
+  "obsidian-emoji-toolbar",
+  "templater-obsidian",
+  "table-editor-obsidian",
+  "obsidian-tasks-plugin"
 ]
