@@ -100,7 +100,7 @@ public class SkipList<T> where T : IComparable<T>{
     //获取需要删除节点的下一个指向，用于后续的指向替换
     current = current.Forword[0];
 
-    if(current.Data.IsEqualTo(dataItem) == false){
+    if(current.Data.Equals(dataItem) == false){
       deleted = default(T);
       return false;
     }
@@ -124,15 +124,15 @@ public class SkipList<T> where T : IComparable<T>{
     var current = mFirstNode;
 
     for(int i = mCurrentMaxLevel-1; i >= 0; i--)
-      while(current.Forword[i] != mFirstNode && current.Forword[i].Data.CompareTo(dataItem) < 0)
+      while(current.Forword[i] != mFirstNode && current.Forword[i].Data.CompareTo(item) < 0)
         current = current.Forword[i];
 
     //上面遍历得到的节点是需要节点（item）的前一个，真正需要的是上面得到节点的下一个指向
     current = current.Forword[0];
 
-    if(current.Data.IsEqualTo(item)){
+    if(current.Data.Equals(item)){
       result = current.Data;
-      return result;
+      return true;
     }
 
     result = default(T);

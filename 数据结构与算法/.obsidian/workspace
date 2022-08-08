@@ -4,12 +4,12 @@
     "type": "split",
     "children": [
       {
-        "id": "f8d5c44855be519d",
+        "id": "bc583d19214cf513",
         "type": "leaf",
         "state": {
           "type": "markdown",
           "state": {
-            "file": "8.散列表/散列表基本概念.md",
+            "file": "9.树/二叉树/二叉树的基本概念.md",
             "mode": "source",
             "source": false
           }
@@ -53,7 +53,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 291
   },
   "right": {
     "id": "4acbedb9faa33eaf",
@@ -69,7 +69,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "8.散列表/散列表基本概念.md",
+                "file": "9.树/二叉树/二叉树的基本概念.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -79,25 +79,34 @@
                 "unlinkedCollapsed": true
               }
             }
+          },
+          {
+            "id": "3ca81477f61e264b",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {}
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 300,
+    "width": 234.5,
     "collapsed": true
   },
-  "active": "f8d5c44855be519d",
+  "active": "bc583d19214cf513",
   "lastOpenFiles": [
-    "Excalidraw/散列表链表法excalidraw.md",
-    "Excalidraw/单链表.excalidraw.md",
-    "Excalidraw/数组与链表区别图.excalidraw.md",
-    "Excalidraw/散列表线性探索删除查询.excalidraw.md",
-    "Excalidraw/散列表.excalidraw.md",
-    "Excalidraw/链表的插入与删除.excalidraw.md",
-    "Excalidraw/队列结构.excalidraw.md",
-    "Excalidraw/单链表删除功能.excalidraw.md",
-    "Excalidraw/单链表的详细插入图解.excalidraw.md",
-    "8.散列表/散列表基本概念.md"
+    "9.树/红黑树/红黑树基本概念.md",
+    "9.树/二叉树/二叉树的基本概念.md",
+    "8.散列表/散列表基本概念.md",
+    "11.图/图基本概念.md",
+    "10.堆/堆基本概念.md",
+    "Excalidraw/带权图.excalidraw.md",
+    "Excalidraw/方向图.excalidraw.md",
+    "Excalidraw/图.excalidraw.md",
+    "Excalidraw/平衡二叉树.excalidraw.md",
+    "Excalidraw/二叉树定义.excalidraw.md"
   ]
 }
