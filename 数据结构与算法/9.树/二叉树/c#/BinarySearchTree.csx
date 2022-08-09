@@ -1,12 +1,12 @@
 using System;
 
-public class BinarySearchTree<T>{
+public class BinarySearchTree<T> where T : IComparable<T>{
   private int mSize;
   private Node<T> mRoot;
   
   public BinarySearchTree(){
     mSize = 0;
-    mRoot = new Node<T>();
+    mRoot = null;
   }
 
   public Node<T> Root{
@@ -42,10 +42,10 @@ public class BinarySearchTree<T>{
     if(node == null || node.Data.Equals(item))
       return node;
 
-    if(node.Data.GetHashCode() > item.GetHashCode())
+    if(node.Data.CompareTo(item) > 0)
       return find(node.LeftNode, item);
 
-    if(node.Data.GetHashCode() < item.GetHashCode())
+    if(node.Data.CompareTo(item) < 0)
       return find(node.RightNode, item);
 
     return null;
@@ -61,7 +61,7 @@ public class BinarySearchTree<T>{
     if(nodeItem.ParentNode == null)
       nodeItem.ParentNode = Root;
 
-    if(nodeItem.ParentNode.Data.GetHashCode() > nodeItem.Data.GetHashCode()){
+    if(nodeItem.ParentNode.Data.CompareTo(nodeItem.Data) > 0){
       if(nodeItem.ParentNode.LeftNode == null){
         nodeItem.ParentNode.LeftNode = nodeItem;
         mSize++;
@@ -89,7 +89,7 @@ public class BinarySearchTree<T>{
     var parent = node.ParentNode;
 
     if(node.LeftNode != null && node.RightNode != null){
-      var minNode = findMinNode(node);
+      var minNode = findMinNode(node.RightNode);
       node.Data = minNode.Data;
       return remove(minNode);
     }
