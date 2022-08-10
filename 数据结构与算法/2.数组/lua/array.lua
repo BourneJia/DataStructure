@@ -8,6 +8,8 @@ function ArrayList:New(capacity)
   self.mCap = capacity
   self.mData = {}
   self.mLength = 0
+
+  return self
 end
 
 function ArrayList:Insert(index, data)

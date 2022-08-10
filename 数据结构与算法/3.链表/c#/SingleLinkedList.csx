@@ -25,38 +25,6 @@ Print(a.Length);
 // Print("删除后的第五位数为：");
 Print(a.Find(7));
 
-/**
-描述：链表结点类
-mData：自身数据
-mNext：指向下个数据的引用
-*/
-public class SingleLinkedNode<T>{
-  private T mData;
-  private SingleLinkedNode<T> mNext;
-
-  //提供默认构造函数
-  public SingleLinkedNode(){
-    mNext = null;
-    mData = default(T);
-  }
-
-  //提供赋值构造
-  public SingleLinkedNode(T tData){
-    mNext = null;
-    mData = tData;
-  }
-
-  public T Data {
-    set{ mData = value; }
-    get{ return mData; }
-  }
-
-  public SingleLinkedNode<T> Next {
-    get { return mNext; }
-    set { mNext = value; }
-  }
-}
-
 /***
 描述：单链表结构
     1. 提供增删改查功能
@@ -224,5 +192,37 @@ public class SingleLinkedList<T>{
     mFirst  = null;
     mLast   = null;
     mLenght = 0;
+  }
+}
+
+/**
+描述：链表结点类
+mData：自身数据
+mNext：指向下个数据的引用
+*/
+public class SingleLinkedNode<T>{
+  private T mData;
+  private SingleLinkedNode<T> mNext;
+
+  //提供默认构造函数
+  public SingleLinkedNode(){
+    mNext = null;
+    mData = default(T);
+  }
+
+  //提供赋值构造
+  public SingleLinkedNode(T tData){
+    mNext = null;
+    mData = tData;
+  }
+
+  public T Data {
+    set{ mData = value; }
+    get{ return mData; }
+  }
+
+  public SingleLinkedNode<T> Next {
+    get { return mNext; }
+    set { mNext = value; }
   }
 }

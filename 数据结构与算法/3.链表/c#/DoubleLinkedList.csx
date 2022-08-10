@@ -24,46 +24,6 @@ Print(a.Count);
 // Print("删除后的第五位数为：");
 Print(a.GetElement(7));
 
-
-public class DoubleLinkedNode<T>{
-  private T mData;
-  private DoubleLinkedNode<T> mNext;
-  private DoubleLinkedNode<T> mPrevious;
-
-  public DoubleLinkedNode(){
-    mData = default(T);
-    mNext = null;
-    mPrevious = null;
-  }
-
-  public DoubleLinkedNode(T dataItem){
-    mData = dataItem;
-    mNext = null;
-    mPrevious = null;
-  }
-
-  public DoubleLinkedNode(T dataItem, DoubleLinkedNode<T> next, DoubleLinkedNode<T> previous){
-    mData = dataItem;
-    mNext = next;
-    mPrevious = previous;
-  }
-
-  public T Data{
-    get {return mData;}
-    set {mData = value;}
-  }
-
-  public DoubleLinkedNode<T> Next{
-    get {return mNext;}
-    set {mNext = value;}
-  }
-
-  public DoubleLinkedNode<T> Previous{
-    get {return mPrevious;}
-    set {mPrevious = value;}
-  }
-}
-
 public class DoubleLinkedList<T>{
   private int mCount;
   private DoubleLinkedNode<T> mFirst;
@@ -272,5 +232,45 @@ public class DoubleLinkedList<T>{
   public void Clear(){
     mCount = 0;
     mFirst = mLast = null;
+  }
+}
+
+
+public class DoubleLinkedNode<T>{
+  private T mData;
+  private DoubleLinkedNode<T> mNext;
+  private DoubleLinkedNode<T> mPrevious;
+
+  public DoubleLinkedNode(){
+    mData = default(T);
+    mNext = null;
+    mPrevious = null;
+  }
+
+  public DoubleLinkedNode(T dataItem){
+    mData = dataItem;
+    mNext = null;
+    mPrevious = null;
+  }
+
+  public DoubleLinkedNode(T dataItem, DoubleLinkedNode<T> next, DoubleLinkedNode<T> previous){
+    mData = dataItem;
+    mNext = next;
+    mPrevious = previous;
+  }
+
+  public T Data{
+    get {return mData;}
+    set {mData = value;}
+  }
+
+  public DoubleLinkedNode<T> Next{
+    get {return mNext;}
+    set {mNext = value;}
+  }
+
+  public DoubleLinkedNode<T> Previous{
+    get {return mPrevious;}
+    set {mPrevious = value;}
   }
 }

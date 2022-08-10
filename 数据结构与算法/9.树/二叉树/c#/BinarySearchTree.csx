@@ -86,7 +86,7 @@ public class BinarySearchTree<T> where T : IComparable<T>{
     if(node == null)
       return false;
 
-    var parent = node.ParentNode;
+    //var parent = node.ParentNode;
 
     if(node.LeftNode != null && node.RightNode != null){
       var minNode = findMinNode(node.RightNode);
@@ -112,8 +112,10 @@ public class BinarySearchTree<T> where T : IComparable<T>{
     if(node.ParentNode != null){
       if(node.ParentNode.LeftNode.Equals(node))
         node.ParentNode.LeftNode = newNode;
+      else
+        node.ParentNode.RightNode = newNode;
     } else {
-      node.ParentNode.RightNode = newNode;
+      Root = newNode;
     }
 
     if(newNode != null)
