@@ -174,7 +174,7 @@ public class DoubleLinkedList<T>{
         currentNode = mFirst;
 
         for(int i = 0; i < index; i++){
-          currentNode = mFirst;
+          currentNode = currentNode.Next;
         }
 
         var oldNode = currentNode;
