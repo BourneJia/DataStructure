@@ -127,7 +127,7 @@ public class SkipList<T> where T : IComparable<T>{
       while(current.Forword[i] != mFirstNode && current.Forword[i].Data.CompareTo(item) < 0)
         current = current.Forword[i];
 
-    //上面遍历得到的节点是需要节点（item）的前一个，真正需要的是上面得到节点的下一个指向
+    //上面遍历得到的节点是需要节点（item）的前一个，真正需要的是上面得到节点的下一个指向，因此进行再次赋值
     current = current.Forword[0];
 
     if(current.Data.Equals(item)){
@@ -141,7 +141,7 @@ public class SkipList<T> where T : IComparable<T>{
 }
 
 public class SkipListNode<T>{
-  //临时方法，用来给数据进行排序使用
+  //临时方法，用来给数据进行排序使用，发现直接用compare 对比就行，ASCII进行对比
   //private int key;
   private T mData;
   private SkipListNode<T>[] mForwords;
@@ -154,6 +154,7 @@ public class SkipListNode<T>{
     Forword = new SkipListNode<T>[level];
   }
 
+  //原本想通过key进行过排序，发现直接用compare 对比就行，ASCII进行对比
   // public int Key{
   //   get {return key;}
   //   set {key = value;}

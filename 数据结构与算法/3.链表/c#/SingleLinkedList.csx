@@ -52,10 +52,6 @@ public class SingleLinkedList<T>{
     return (mLenght == 0);
   }
 
-  public bool IsExit(){
-    return false;
-  }
-
   //插入单链表第一个位，替换mFirst
   public void Prepend(T dataItem){
 
