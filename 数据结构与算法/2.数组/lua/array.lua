@@ -15,7 +15,7 @@ function ArrayList:New(capacity)
 end
 
 function ArrayList:Insert(index, data)
-  assert(type(index) == "number", "index is not a int")
+  assert(type(index) == "number", "index is not a number")
   -- assert(self.mCap == self.mData, "数组没有多余空间进行添加") 还是去扩容算了
   assert(index >= 1 and index <= self.mLength+1, "Index was outside the bounds of the list")
   if(self.mCap == self.mLength)

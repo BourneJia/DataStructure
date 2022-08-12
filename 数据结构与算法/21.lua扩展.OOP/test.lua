@@ -34,9 +34,9 @@ end
 -- end
 
 local x = Shape:new(nil,2)
-local y = Shape:new(nil,3)
+--local y = Shape:new(nil,3)
 x:PrintArea()
-y:PrintArea()
+--y:PrintArea()
 Shape.area = 222
 x:PrintArea()
-y:PrintArea()
+--y:PrintArea()

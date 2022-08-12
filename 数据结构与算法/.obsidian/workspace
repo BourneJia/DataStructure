@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "设计模式/单例模式.md",
+            "file": "4.栈/栈的基本概念.md",
             "mode": "source",
             "source": false
           }
@@ -69,7 +69,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "设计模式/单例模式.md",
+                "file": "4.栈/栈的基本概念.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -98,6 +98,7 @@
   },
   "active": "bc583d19214cf513",
   "lastOpenFiles": [
+    "设计模式/单例模式.md",
     "3.链表/链表基础概念.md",
     "9.树/红黑树/红黑树基本概念.md",
     "Excalidraw/红黑树删除情况.excalidraw.md",
@@ -106,7 +107,6 @@
     "8.散列表/散列表基本概念.md",
     "11.图/图基本概念.md",
     "10.堆/堆基本概念.md",
-    "Excalidraw/带权图.excalidraw.md",
-    "Excalidraw/方向图.excalidraw.md"
+    "Excalidraw/带权图.excalidraw.md"
   ]
 }

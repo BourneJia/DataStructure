@@ -69,7 +69,7 @@ function DoubleLinedList:Insert(index, value)
   assert(type(index)=="number","index is not a number")
   assert(index > 0 and index <= self.mLength+1,"Index was outside the bounds of the list")
 
-  if(index == 0)
+  if(index == 1)
   then
     self:Prepend(value)
   elseif(index == self.mLength+1) 
@@ -83,42 +83,42 @@ function DoubleLinedList:Insert(index, value)
     then
       currentNode = self.mLast
       local i = self.mLength
-      while(i>index+1)
+      while(i>index)
       do
         currentNode = currentNode.mPrevious
         i = i-1
       end
-      local oldNode = currentNode
+      --local oldNode = currentNode
 
-      if(oldNode ~= nil)
+      if(currentNode ~= nil)
       then
-        currentNode.mNext.mPrevious = newNode
+        currentNode.mPrevious.mNext = newNode
       end
 
-      newNode.mNext = oldNode
-      currentNode.mNext = newNode
-      newNode.mPrevious = currentNode
+      newNode.mNext = currentNode
+      --currentNode.mNext = newNode
+      newNode.mPrevious = currentNode.mPrevious
 
       self.mLength = self.mLength + 1
     else
       currentNode = self.mFirst
       local i = 1
-      while(i < index+1)
+      while(i < index)
       do
         currentNode = currentNode.mNext
         i = i+1
       end
 
-      local oldNode = currentNode
+      --local oldNode = currentNode
 
-      if(oldNode ~= nil)
+      if(currentNode ~= nil)
       then
-        currentNode.mNext.mPrevious = newNode
+        currentNode.mPrevious.mNext = newNode
       end
 
-      newNode.mNext = oldNode
-      currentNode.mNext = newNode
-      newNode.mPrevious = currentNode
+      newNode.mNext = currentNode
+      --currentNode.mNext = newNode
+      newNode.mPrevious = currentNode.mPrevious
 
       self.mLength = self.mLength + 1
     end
@@ -129,9 +129,9 @@ end
 function DoubleLinedList:Delete(index)
   assert(type(index)=="number","index is not a number")
   assert(index > 0 and index <= self.mLength,"Index was outside the bounds of the list")
-  assert(self.mLength == 0,"Index was outside the bounds of the list")
+  assert(self.mLength ~= 0,"Index was outside the bounds of the list")
 
-  if(index == 0) then
+  if(index == 1) then
     self.mFirst = self.mFirst.mNext
     if(self.mFirst ~= nil) then
       self.mFirst.mPrevious = nil
@@ -144,7 +144,7 @@ function DoubleLinedList:Delete(index)
   elseif (index > self.mLength/2) then
     local currentNode = self.mLast
     local i = self.mLength
-    while(i>=index)
+    while(i > index)
     do
       currentNode = currentNode.mPrevious
       i = i-1
@@ -159,7 +159,7 @@ function DoubleLinedList:Delete(index)
   else
     local currentNode = self.mFirst
     local i = 1
-    while(i <= index)
+    while(i < index)
     do
       currentNode = currentNode.mNext
     end
@@ -176,9 +176,9 @@ end
 function DoubleLinedList:Find(index)
   assert(type(index)=="number","index is not a number")
   assert(index > 0 and index <= self.mLength,"Index was outside the bounds of the list")
-  assert(self.mLength == 0,"Index was outside the bounds of the list")
+  assert(self.mLength ~= 0,"Index was outside the bounds of the list")
 
-  if(index==0) then
+  if(index==1) then
     return self.mFirst.mData
   elseif(index == self.mLength) then
     return self.mLast.mData
@@ -189,7 +189,7 @@ function DoubleLinedList:Find(index)
   if(index > self.mLength/2) then
     currentNode = self.mLast
     local i = self.mLength
-    while(i >= index)
+    while(i > index)
     do
       currentNode = currentNode.mPrevious
       i = i-1
@@ -197,7 +197,7 @@ function DoubleLinedList:Find(index)
   else
     currentNode = self.mFirst
     local i = 1
-    while(i <= index)
+    while(i < index)
     do
       currentNode = currentNode.mNext
       i = i+1
@@ -207,5 +207,57 @@ function DoubleLinedList:Find(index)
   return currentNode.mData
 end
 
+local a = DoubleLinedList:New()
 
-print(123)
+-- a:Prepend(5)
+-- a:Prepend(3)
+-- a:Prepend(4)
+-- a:Prepend(15)
+-- a:Prepend(17)
+-- a:Append(12)
+
+a:Insert(1,12)
+a:Insert(2,14)
+a:Insert(3,16)
+a:Insert(4,17)
+a:Insert(5,18)
+a:Insert(6,23)
+a:Insert(7,25)
+a:Insert(8,124)
+a:Insert(9,126)
+a:Insert(10,129)
+a:Insert(11,122)
+
+a:Insert(3,2124)
+
+-- a:Delete(4)
+-- a:Delete(3)
+--a:Delete(6)
+
+local currentNode = a.mFirst
+while(currentNode ~= nil)
+do
+  print(currentNode.mData)
+  currentNode = currentNode.mNext
+end
+
+-- print(a.mFirst.mData)
+-- print(a.mFirst.mNext.mData)
+-- print(a.mFirst.mNext.mNext.mData)
+
+-- for i,v in ipairs(a) do
+--   print(i,v)
+-- end
+
+-- print(a:Find(1))
+-- print(a:Find(2))
+-- print(a:Find(3))
+-- print(a:Find(4))
+-- print(a:Find(5))
+--print(a:Find(6))
+-- a:Insert(1,3)
+-- print(a:Find(1))
+-- print(a:Find(2))
+-- print(a:Find(3))
+
+print(a.mLength)
