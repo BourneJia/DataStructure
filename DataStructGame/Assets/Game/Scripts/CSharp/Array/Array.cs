@@ -1,25 +1,31 @@
 ﻿using System;
 using Game.Scripts.Common.CSharp;
+using UnityEngine;
 
 namespace Game.Scripts.CSharp.Array
 {
    /**描述：c#自定义数组
   功能点：
        1. 可以动态扩容
-       2. 可以插入，删除，以及查询
+       2. 可以插入，删除
+       3. 本身自带快速随机访问特性，因此不特地提供查询
   */
   public class Array<T> {
-      private T[] m_data;
-      private int m_capacity;
-      private int m_length;
+      //提供一个默认值进行初始化
+      private T[] m_data     = new T[10];
+      private int m_capacity = 10;
+      private int m_length   = 0;
       
       public T[] Data   => m_data;
       public int Length => m_length;
 
+      public Array() {
+        
+      }
+
       public Array(int capacity){
         m_data     = new T[capacity];
         m_capacity = capacity;
-        m_length   = 0;
       }
 
       public bool Insert(int index, T newElem){
@@ -28,7 +34,7 @@ namespace Game.Scripts.CSharp.Array
           _Resize();
         }
         //判断下标是否正确，防止出现不连续下标以及负数下标
-        Common.CSharp.Common.CheckIndexOutByAction(CheckIndexOfAction.Insert, index, m_length);
+        Common.CSharp.Common.S_CheckIndexOutForNotEqual(index,m_length);
 
         //此处把替换位置后面的值进行平移挪动，然后进行赋值
         for(int i = m_length; i > index; i--){
@@ -43,7 +49,7 @@ namespace Game.Scripts.CSharp.Array
       
       public bool Delete(int index){
         //判断下标是否正确，防止出现不连续下标以及负数下标
-        Common.CSharp.Common.CheckIndexOutByAction(CheckIndexOfAction.Delete,index,m_length);
+        Common.CSharp.Common.S_CheckIndexOutForEqual(index,m_length);
         
         //此处把替换位置前面的值进行平移挪动，然后进行赋值
         for(int i = index; i < m_length-1; i++){
@@ -62,8 +68,7 @@ namespace Game.Scripts.CSharp.Array
 
       public void PrintAll(){
         for(int i = 0; i < m_length; i++){
-          Console.WriteLine("mData["+i+"]");
-          Console.WriteLine(m_data[i].ToString());
+          Debug.Log("mData["+i+"]:"+m_data[i].ToString());
         }
       }
       
@@ -78,5 +83,6 @@ namespace Game.Scripts.CSharp.Array
 
         m_data = newData;
       }
-  } 
+
+   } 
 }

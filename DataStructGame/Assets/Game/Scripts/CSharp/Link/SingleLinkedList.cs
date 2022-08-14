@@ -1,163 +1,110 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Game.Scripts.CSharp.Link {
+  
+    /// <summary>
+    /// 单链表结构：
+    /// 1. 快速插入首节点
+    /// 2. 快速插入尾节点
+    /// 3. 提供迭代器
+    /// 4. 由于链表本身对随机访问不友好，就不强行进行遍历查询功能提供
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class SingleLinkedList<T> {
-      private SingleLinkedNode<T> m_first;
-      private SingleLinkedNode<T> m_last;
-      private int m_length;
+      private SingleLinkedNode<T> m_first = null;
+      private SingleLinkedNode<T> m_last  = null;
+      private int m_length                = 0;
+      
+      public SingleLinkedNode<T> First => m_first;
+      public SingleLinkedNode<T> Last  => m_last;
+      public int Length                => m_length;
 
-      public int Length{
-        get {
-          return m_length;
+      public SingleLinkedList() {
+        
+      }
+
+      //插入单链表首位，替换m_first
+      public void Prepend(SingleLinkedNode<T> newNode){
+        if (newNode == null) {
+          return;
         }
-      }
 
-      public SingleLinkedNode<T> Head {
-        get {
-          return m_first;
-        }
-      }
-
-      public SingleLinkedList(){
-        m_first  = null;
-        m_last   = null;
-        m_length = 0;
-      }
-
-      private bool isEmpty(){
-        return (m_length == 0);
-      }
-
-      //插入单链表第一个位，替换mFirst
-      public void Prepend(T dataItem){
-
-        SingleLinkedNode<T> newNode = new SingleLinkedNode<T>(dataItem);
-
-        if (isEmpty()){
-          m_first = m_last = newNode;
+        if (_IsEmpty()){
+          _FirstAdd(newNode);
         } else {
-          var currentNode = m_first;
-          newNode.Next = currentNode;
-          m_first = newNode;
+          var replaceNode = m_first;
+          m_first         = newNode;
+          newNode.Next    = replaceNode;
         }
 
         m_length++;
-
-        //return true;
       }
 
-      public void Append(T dataItem){
-        SingleLinkedNode<T> newNode = new SingleLinkedNode<T>(dataItem);
+      //插入单链表末位，替换m_last
+      public void Append(SingleLinkedNode<T> newNode){
+        if (newNode == null) {
+          return;
+        }
 
-        if (isEmpty()){
-          m_first = m_last = newNode;
+        if (_IsEmpty()){
+          _FirstAdd(newNode);
         } else {
-          var currentNode = m_last;
-          currentNode.Next = newNode;
-          m_last = newNode;
+          var replaceNode  = m_last;
+          m_last           = newNode;
+          replaceNode.Next = newNode;
         }
 
         m_length++;
-
-        //return true;
       }
 
-      public bool Insert(int index, T dataItem){
-        bool isSuccess = true;
-
-        if(index == 0){
-          Prepend(dataItem);
-        } else if (index == Length){
-          Append(dataItem);
-        } else if (index > 0 && index < Length ) {
-          var currentNode = Head;
-          var newNode = new SingleLinkedNode<T>(dataItem);
-          for(int i = 0; i < index; i++){
-            currentNode = currentNode.Next;
+      //去除单链表首部内容
+      public void DeleteFirstNode() {
+        if (!_IsEmpty()) {
+          if (m_length == 1)
+            m_first = m_last = null;
+          else {
+            m_first = m_first.Next;
+            m_length--;
           }
-          newNode.Next = currentNode.Next;
-          currentNode.Next = newNode;
-
-          m_length++;
-        } else {
-          Console.WriteLine("index 不在规定范围内");
-          isSuccess = false;
         }
-        return isSuccess;
       }
 
-      public bool Delete(int index){
-        bool isSuccess = true;
-
-        if(isEmpty() || index < 0 || index >= Length){
-          Console.WriteLine("index 不在规定范围内");
-          isSuccess = false;
-        }
-
-        if(index == 0){
-
-          m_first = m_first.Next;
-          m_length--;
+      /// <summary>
+      /// 直接插入某个已知节点的next区域
+      /// </summary>
+      /// <param name="originNode">默认获取的是由data创建的初始节点信息，由于本身不想创建额外CG，因此让使用者直接在外部创建</param>
+      /// <param name="newNode">新的节点内容</param>
+      public void InsertByNode(SingleLinkedNode<T> originNode,SingleLinkedNode<T> newNode) {
+        if (newNode == null)
+          return;
         
-        } else if (index == Length-1){
-          var currentNode = m_first;
-          
-          while(currentNode.Next != null && currentNode.Next != m_last)
-            currentNode = currentNode.Next;
-          
-          currentNode.Next = null;
-          m_last = currentNode;
-          m_length--;
-        
-        } else {
-          int i = 0;
-          var currentNode = m_first;
+        //根据节点的data值，获取完整节点信息
+        originNode = _GetElement(m_first,originNode);
 
-          //这样的好处是防止中间断层，其余方面暂时没有想到相比下方的foreach语法特性有其它优势
-          while (currentNode.Next != null){
-            if (i + 1 == index){
-              currentNode.Next = currentNode.Next.Next;
-              m_length--;
-              break;
-            }
-            i++;
-            currentNode = currentNode.Next;
+        if (originNode != null) {
+          if(originNode.Equals(m_last))
+            Append(newNode);
+          else {
+            _InsertNode(originNode,newNode);
           }
-
-          // for(int j = 0; j < index; j++){
-          //   if (j == (index-1)){
-          //     currentNode.Next = currentNode.Next.Next;
-          //     mLenght--;
-          //     break;
-          //   }
-
-          //   currentNode = currentNode.Next;
-          // }
-        } 
-
-        return isSuccess;
+        }
       }
 
-      public T Find(int index){
-        if(isEmpty() || index < 0 || index >= Length){
-          Console.WriteLine("index 不在规定范围内");
-          throw new IndexOutOfRangeException();
+      /// <summary>
+      /// 删除某个节点
+      /// </summary>
+      /// <param name="deleteNode">删除节点数据</param>
+      public void DeleteByNode(SingleLinkedNode<T> deleteNode) {
+        if (deleteNode == null)
+          return;
+        
+        deleteNode = _GetElement(m_first, deleteNode);
+        
+        if (deleteNode != null) {
+          var deleteNodePre = _GetPreElement(m_first,deleteNode);
+          deleteNodePre.Next = deleteNode.Next;
         }
-
-        if(index == 0){
-          return m_first.Data;
-        }
-        if(index == (Length - 1)){
-          return m_last.Data;
-        }
-        if(index > 0 && index < (Length-1)){
-          var currentNode = m_first;
-          for(int i = 0; i < index; i++)
-            currentNode = currentNode.Next;
-          return currentNode.Data;
-        }
-
-        throw new IndexOutOfRangeException();
       }
 
       public void Clear(){
@@ -165,6 +112,74 @@ namespace Game.Scripts.CSharp.Link {
         m_last   = null;
         m_length = 0;
       }
+
+      public void PrintAll() {
+        var current = m_first;
+        var i = 0;
+        while (current != null) {
+          Debug.Log("List["+i+"]:"+ current.Data.ToString());
+          current = current.Next;
+          i++;
+        }
+      }
+
+      private bool _IsEmpty(){
+        return (m_length == 0);
+      }
+      
+      
+      //首次添加，也可以用于删除唯一的元素
+      private void _FirstAdd(SingleLinkedNode<T> newNode) {
+        m_first = m_last = newNode;
+      }
+
+      /// <summary>
+      /// 插入替换方法
+      /// </summary>
+      /// <param name="originNode"></param>
+      /// <param name="newNode"></param>
+      private void _InsertNode(SingleLinkedNode<T> originNode, SingleLinkedNode<T> newNode) {
+        var replaceNode = originNode;
+        originNode.Next = newNode;
+        newNode.Next    = replaceNode.Next.Next;
+      }
+
+      /// <summary>
+      /// 通过一个节点数据获取该节点整体信息方法
+      /// </summary>
+      /// <param name="startNode">开始遍历查询的节点</param>
+      /// <param name="targetNode">目标节点</param>
+      /// <returns></returns>
+      private SingleLinkedNode<T> _GetElement(SingleLinkedNode<T> startNode, SingleLinkedNode<T> targetNode) {
+        var current = startNode;
+
+        while (current != null) {
+          if (current.Data.Equals(targetNode.Data))
+            return current;
+          current = current.Next;
+        }
+
+        return null;
+      }
+
+      /// <summary>
+      /// 获取该节点的前面节点
+      /// </summary>
+      /// <param name="startNode">开始遍历查询的节点</param>
+      /// <param name="targetNode">目标节点</param>
+      /// <returns></returns>
+      private SingleLinkedNode<T> _GetPreElement(SingleLinkedNode<T> startNode, SingleLinkedNode<T> targetNode) {
+        var current = startNode;
+
+        while (current != null) {
+          if (current.Next.Data.Equals(targetNode.Data))
+            return current;
+          current = current.Next;
+        }
+
+        return null;
+      }
+
     }
     
     /**
@@ -173,29 +188,25 @@ namespace Game.Scripts.CSharp.Link {
     mNext：指向下个数据的引用
     */
     public class SingleLinkedNode<T>{
-        private T m_data;
-        private SingleLinkedNode<T> m_next;
+        private T                   m_data = default(T);
+        private SingleLinkedNode<T> m_next = null;
 
-        //提供默认构造函数
-        public SingleLinkedNode(){
-            m_next = null;
-            m_data = default(T);
+        public SingleLinkedNode() {
         }
 
         //提供赋值构造
         public SingleLinkedNode(T tData){
-            m_next = null;
-            m_data = tData;
+          m_data = tData;
         }
 
         public T Data {
-            set{ m_data = value; }
-            get{ return m_data; }
+          get => m_data;
+          set => m_data = value;
         }
 
         public SingleLinkedNode<T> Next {
-            get { return m_next; }
-            set { m_next = value; }
+          get => m_next;
+          set => m_next = value;
         }
     }
 }
