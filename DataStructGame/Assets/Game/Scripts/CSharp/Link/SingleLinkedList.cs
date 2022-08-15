@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Scripts.CSharp.Link {
@@ -11,7 +11,7 @@ namespace Game.Scripts.CSharp.Link {
     /// 4. 由于链表本身对随机访问不友好，就不强行进行遍历查询功能提供
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SingleLinkedList<T> {
+    public class SingleLinkedList<T> : IEnumerable<T> {
       private SingleLinkedNode<T> m_first = null;
       private SingleLinkedNode<T> m_last  = null;
       private int m_length                = 0;
@@ -26,9 +26,8 @@ namespace Game.Scripts.CSharp.Link {
 
       //插入单链表首位，替换m_first
       public void Prepend(SingleLinkedNode<T> newNode){
-        if (newNode == null) {
+        if (_CheckParamIsNull(newNode)) 
           return;
-        }
 
         if (_IsEmpty()){
           _FirstAdd(newNode);
@@ -43,9 +42,8 @@ namespace Game.Scripts.CSharp.Link {
 
       //插入单链表末位，替换m_last
       public void Append(SingleLinkedNode<T> newNode){
-        if (newNode == null) {
+        if (_CheckParamIsNull(newNode)) 
           return;
-        }
 
         if (_IsEmpty()){
           _FirstAdd(newNode);
@@ -76,9 +74,9 @@ namespace Game.Scripts.CSharp.Link {
       /// <param name="originNode">默认获取的是由data创建的初始节点信息，由于本身不想创建额外CG，因此让使用者直接在外部创建</param>
       /// <param name="newNode">新的节点内容</param>
       public void InsertByNode(SingleLinkedNode<T> originNode,SingleLinkedNode<T> newNode) {
-        if (newNode == null)
+        if (_CheckParamIsNull(newNode) || _CheckParamIsNull(originNode))
           return;
-        
+
         //根据节点的data值，获取完整节点信息
         originNode = _GetElement(m_first,originNode);
 
@@ -96,15 +94,31 @@ namespace Game.Scripts.CSharp.Link {
       /// </summary>
       /// <param name="deleteNode">删除节点数据</param>
       public void DeleteByNode(SingleLinkedNode<T> deleteNode) {
-        if (deleteNode == null)
+        if (_CheckParamIsNull(deleteNode)) 
           return;
-        
+
         deleteNode = _GetElement(m_first, deleteNode);
         
         if (deleteNode != null) {
           var deleteNodePre = _GetPreElement(m_first,deleteNode);
           deleteNodePre.Next = deleteNode.Next;
         }
+      }
+
+      /// <summary>
+      /// 获取前置的节点内容
+      /// </summary>
+      /// <param name="node"></param>
+      /// <returns></returns>
+      public SingleLinkedNode<T> GetPreNode(SingleLinkedNode<T> node) {
+        if (_CheckParamIsNull(node))
+          return null;
+
+        var resultNode = _GetPreElement(m_first,node);
+
+        if (_CheckParamIsNull(resultNode))
+          return null;
+        return resultNode;
       }
 
       public void Clear(){
@@ -139,6 +153,9 @@ namespace Game.Scripts.CSharp.Link {
       /// <param name="originNode"></param>
       /// <param name="newNode"></param>
       private void _InsertNode(SingleLinkedNode<T> originNode, SingleLinkedNode<T> newNode) {
+        if (_CheckParamIsNull(originNode) || _CheckParamIsNull(newNode))
+          return;
+
         var replaceNode = originNode;
         originNode.Next = newNode;
         newNode.Next    = replaceNode.Next.Next;
@@ -151,6 +168,8 @@ namespace Game.Scripts.CSharp.Link {
       /// <param name="targetNode">目标节点</param>
       /// <returns></returns>
       private SingleLinkedNode<T> _GetElement(SingleLinkedNode<T> startNode, SingleLinkedNode<T> targetNode) {
+        if (_CheckParamIsNull(startNode) || _CheckParamIsNull(targetNode))
+          return null;
         var current = startNode;
 
         while (current != null) {
@@ -169,6 +188,9 @@ namespace Game.Scripts.CSharp.Link {
       /// <param name="targetNode">目标节点</param>
       /// <returns></returns>
       private SingleLinkedNode<T> _GetPreElement(SingleLinkedNode<T> startNode, SingleLinkedNode<T> targetNode) {
+        if (_CheckParamIsNull(startNode) || _CheckParamIsNull(targetNode))
+          return null;
+        
         var current = startNode;
 
         while (current != null) {
@@ -180,6 +202,52 @@ namespace Game.Scripts.CSharp.Link {
         return null;
       }
 
+      private bool _CheckParamIsNull(SingleLinkedNode<T> node) {
+        if (node == null) {
+          Debug.LogAssertion("The node is null");
+          return false;
+        }
+
+        return true;
+      }
+
+      /*******************************迭代器实现****************************************/
+      internal class SingleLinkedListEnumerator : IEnumerator<T> {
+        private SingleLinkedNode<T> m_currentNode = null;
+        private SingleLinkedList<T> m_linkedList  = null;
+
+        public SingleLinkedListEnumerator(SingleLinkedList<T> list) {
+          m_currentNode = list.First;
+          m_linkedList  = list;
+        }
+
+        public T Current => m_currentNode.Data;
+
+        object System.Collections.IEnumerator.Current => Current;
+
+        public bool MoveNext() {
+          m_currentNode = m_currentNode.Next;
+
+          return (m_currentNode != null);
+        }
+
+        public void Reset() {
+          m_currentNode = m_linkedList.First;
+        }
+
+        public void Dispose() {
+          m_currentNode = null;
+          m_linkedList  = null;
+        }
+      }
+
+      public IEnumerator<T> GetEnumerator() {
+        return new SingleLinkedListEnumerator(this);
+      }
+
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+        return this.GetEnumerator();
+      }
     }
     
     /**

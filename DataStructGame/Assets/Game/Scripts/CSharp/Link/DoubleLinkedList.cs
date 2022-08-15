@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Scripts.CSharp.Link {
@@ -10,16 +11,19 @@ namespace Game.Scripts.CSharp.Link {
   /// 4. 建议根据特性，不实用index等方式遍历，尽量采用链表特性
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public class DoubleLinkedList<T>{
+  public class DoubleLinkedList<T> : IEnumerable<T> {
     private DoubleLinkedNode<T> m_first = null;
     private DoubleLinkedNode<T> m_last  = null;
     private int                 m_count = 0;
 
-    public DoubleLinkedNode<T> Head => m_first;
+    public DoubleLinkedNode<T> First => m_first;
     public DoubleLinkedNode<T> Last => m_last;
     public int                Count => m_count;
 
     public void Prepend(DoubleLinkedNode<T> newNode){
+      if(_CheckParamIsNull(newNode))
+        return;;
+
       if(_IsEmpty()){
         _FirstAdd(newNode);
       } else {
@@ -33,6 +37,9 @@ namespace Game.Scripts.CSharp.Link {
     }
 
     public void Append(DoubleLinkedNode<T> newNode){
+      if(_CheckParamIsNull(newNode))
+        return;;
+      
       if(_IsEmpty()){
         _FirstAdd(newNode);
       } else {
@@ -52,7 +59,7 @@ namespace Game.Scripts.CSharp.Link {
     /// <param name="newNode">添加元素</param>
     /// <param name="targetNode">目标元素,默认是null，默认时根据direction判断是first还是last</param>
     public void Add(Common.CSharp.Common.NodeDirection direction,DoubleLinkedNode<T> newNode, DoubleLinkedNode<T> targetNode = null) {
-      if(newNode == null)
+      if(_CheckParamIsNull(newNode))
         return;
 
       if (_IsEmpty())
@@ -128,6 +135,9 @@ namespace Game.Scripts.CSharp.Link {
     
     //首次添加，也可以用于删除唯一的元素
     private void _FirstAdd(DoubleLinkedNode<T> newNode) {
+      if(_CheckParamIsNull(newNode))
+        return;
+      
       m_first = m_last = newNode;
     }
 
@@ -138,6 +148,9 @@ namespace Game.Scripts.CSharp.Link {
     /// <param name="originNode">原始元素</param>
     /// <param name="newNode">新元素</param>
     private void _InsertNodeByNodePoint(Common.CSharp.Common.NodeDirection direction,DoubleLinkedNode<T> originNode, DoubleLinkedNode<T> newNode) {
+      if(_CheckParamIsNull(originNode) || _CheckParamIsNull(newNode))
+        return;
+      
       var currentNode = originNode;
       if (direction == Common.CSharp.Common.NodeDirection.Previous) {
         newNode.Next         = currentNode;
@@ -165,6 +178,9 @@ namespace Game.Scripts.CSharp.Link {
     /// <param name="targetNode">指定目标元素，如果只知道data，可以自行构建一个Node，然后放入查询</param>
     /// <returns></returns>
     private DoubleLinkedNode<T> _GetElement(Common.CSharp.Common.NodeDirection direction,DoubleLinkedNode<T> startNode, DoubleLinkedNode<T> targetNode) {
+      if(_CheckParamIsNull(startNode) || _CheckParamIsNull(targetNode))
+        return null;
+      
       var current = startNode;
 
       //该判定如果写在while循环中，可以减少代码，但是执行效率会变低，每次while都会作一次判断
@@ -188,10 +204,70 @@ namespace Game.Scripts.CSharp.Link {
 
     //用于两个节点的相互指向，用于知道某个节点的前后两个指向，进行该节点的删除操作
     private void _DoubleNodeLink(DoubleLinkedNode<T> previousNode, DoubleLinkedNode<T> nextNode) {
+      if(_CheckParamIsNull(previousNode) || _CheckParamIsNull(nextNode))
+        return;
+      
       previousNode.Next = nextNode;
       nextNode.Previous = previousNode;
     }
+    
+    private bool _CheckParamIsNull(DoubleLinkedNode<T> node) {
+      if (node == null) {
+        Debug.LogAssertion("The node is null");
+        return true;
+      }
 
+      return false;
+    }
+    
+    /*****************************迭代器实现*************************************/
+    internal class DoubleLinkedListEnumerator : IEnumerator<T> {
+      private DoubleLinkedNode<T> m_currentNode;
+      private DoubleLinkedList<T> m_linkedList;
+
+      public DoubleLinkedListEnumerator(DoubleLinkedList<T> list) {
+        m_currentNode = list.First;
+        m_linkedList  = list;
+      }
+
+      public T Current => m_currentNode.Data;
+
+      object System.Collections.IEnumerator.Current => Current;
+
+      public bool MoveNext() {
+        m_currentNode = m_currentNode.Next;
+
+        return (m_currentNode != null);
+      }
+
+      public bool MovePrevious() {
+        m_currentNode = m_currentNode.Previous;
+
+        return (m_currentNode != null);
+      }
+
+      public void Reset() {
+        m_currentNode = m_linkedList.First;
+      }
+
+      public void Dispose() {
+        m_currentNode = null;
+        m_linkedList = null;
+      }
+    }
+
+    public IEnumerator<T> GetEnumerator() {
+      var node = First;
+      while (node != null) {
+        yield return node.Data;
+        node = node.Next;
+      }
+      //return new DoubleLinkedListEnumerator(this);
+    }
+    
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+      return this.GetEnumerator();
+    }
   }
 
 

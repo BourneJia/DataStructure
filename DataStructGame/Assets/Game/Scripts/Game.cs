@@ -8,6 +8,7 @@ namespace Game.Scripts {
     public class Game : MonoBehaviour {
         // Start is called before the first frame update
         void Start() {
+            Debug.Log("Game Start 1");
             DoubleLinkedList<int> d_link = new DoubleLinkedList<int>();
             DoubleLinkedNode<int> a = new DoubleLinkedNode<int>(1);
             DoubleLinkedNode<int> b = new DoubleLinkedNode<int>(2);
@@ -29,6 +30,8 @@ namespace Game.Scripts {
             d_link.Add(Common.CSharp.Common.NodeDirection.Next,g);
             d_link.Add(Common.CSharp.Common.NodeDirection.Next,h);
             d_link.Add(Common.CSharp.Common.NodeDirection.Next,i,c);
+            
+            d_link.Delete(Common.CSharp.Common.NodeDirection.Next,c);
             // d_link.Append(b);
             // d_link.Append(c);
             // d_link.Append(d);
@@ -42,6 +45,11 @@ namespace Game.Scripts {
             d_link.PrintAll();
             
             Debug.Log("Game Start");
+            //Debug.Log(d_link.First.Data.ToString());
+            
+            foreach (var node in d_link) {
+                Debug.Log(node);
+            }
         }
 
         // Update is called once per frame
