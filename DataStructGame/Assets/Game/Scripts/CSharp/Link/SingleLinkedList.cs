@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Game.Scripts.Common.CSharp;
 using UnityEngine;
 
 namespace Game.Scripts.CSharp.Link {
@@ -15,7 +16,10 @@ namespace Game.Scripts.CSharp.Link {
       private SingleLinkedNode<T> m_first = null;
       private SingleLinkedNode<T> m_last  = null;
       private int m_length                = 0;
-      
+
+      //private SingleNodeCache<SingleLinkedNode<T>> m_rplaceCache = new SingleNodeCache<SingleLinkedNode<T>>();
+
+
       public SingleLinkedNode<T> First => m_first;
       public SingleLinkedNode<T> Last  => m_last;
       public int                Length => m_length;

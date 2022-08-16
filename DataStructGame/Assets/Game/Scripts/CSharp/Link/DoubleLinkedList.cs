@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.Scripts.Common.CSharp;
 using UnityEngine;
 
 namespace Game.Scripts.CSharp.Link {
@@ -15,6 +16,8 @@ namespace Game.Scripts.CSharp.Link {
     private DoubleLinkedNode<T> m_first = null;
     private DoubleLinkedNode<T> m_last  = null;
     private int                 m_count = 0;
+
+    private DoubleLinkedNode<T> m_replaceCache = new DoubleLinkedNode<T>();
 
     public DoubleLinkedNode<T> First => m_first;
     public DoubleLinkedNode<T> Last => m_last;
@@ -50,7 +53,8 @@ namespace Game.Scripts.CSharp.Link {
       if(_CheckNodeDataIsNull(new_Data))
         return;
 
-      var new_Node = new DoubleLinkedNode<T>(new_Data);
+      var new_Node = m_replaceCache;
+      new_Node.Data = new_Data;
       
       if(_IsEmpty()){
         m_first = m_last = new_Node;
@@ -173,6 +177,7 @@ namespace Game.Scripts.CSharp.Link {
     public void Clear(){
       m_count = 0;
       m_first = m_last = null;
+      m_replaceCache = null;
     }
     
     public void PrintAll() {
@@ -349,11 +354,15 @@ namespace Game.Scripts.CSharp.Link {
   }
 
 
-  public class DoubleLinkedNode<T>{
+  public class DoubleLinkedNode<T> {
     private DoubleLinkedNode<T> m_next      = null;
     private DoubleLinkedNode<T> m_previous  = null;
     private T                   m_data      = default(T);
-    
+
+    public DoubleLinkedNode() {
+      
+    }
+
     public DoubleLinkedNode(T dataItem){
       m_data = dataItem;
     }

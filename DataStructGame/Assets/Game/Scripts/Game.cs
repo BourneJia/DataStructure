@@ -24,13 +24,13 @@ namespace Game.Scripts {
             double_list.Append(564);
             double_list.Append(12);
             double_list.Append(6);
-            double_list.Prepend(7);
-            double_list.Prepend(76);
-            double_list.Prepend(45);
-            double_list.Prepend(75);
-            double_list.Prepend(345);
-            double_list.InsertAtTargetDataByNext(453);
-            double_list.DeleteAtDeleteDataByNext(564);
+            // double_list.Prepend(7);
+            // double_list.Prepend(76);
+            // double_list.Prepend(45);
+            // double_list.Prepend(75);
+            // double_list.Prepend(345);
+            // double_list.InsertAtTargetDataByNext(453);
+            // double_list.DeleteAtDeleteDataByNext(564);
             foreach (var value in double_list) {
                 Debug.Log(value);
             }
