@@ -20,98 +20,154 @@ namespace Game.Scripts.CSharp.Link {
     public DoubleLinkedNode<T> Last => m_last;
     public int                Count => m_count;
 
-    public void Prepend(DoubleLinkedNode<T> newNode){
-      if(_CheckParamIsNull(newNode))
-        return;;
+    /// <summary>
+    /// 链表首位进行插入操作,插入在首节点之前，插入的节点可以通过First获取
+    /// </summary>
+    /// <param name="new_Data"></param>
+    public void Prepend(T new_Data){
+      if(_CheckNodeDataIsNull(new_Data))
+        return;
 
+      var new_Node = new DoubleLinkedNode<T>(new_Data);
+      
       if(_IsEmpty()){
-        _FirstAdd(newNode);
+        m_first = m_last = new_Node;
       } else {
         var currentNode = m_first;
-        m_first = newNode;
-        newNode.Next = currentNode;
-        currentNode.Previous = newNode;
+        m_first = new_Node;
+        new_Node.Next = currentNode;
+        currentNode.Previous = new_Node;
       }
 
       m_count++;
     }
 
-    public void Append(DoubleLinkedNode<T> newNode){
-      if(_CheckParamIsNull(newNode))
-        return;;
+    /// <summary>
+    /// 链表末位添加的，插入在末尾节点，插入节点可以通过Last获取
+    /// </summary>
+    /// <param name="new_Data"></param>
+    public void Append(T new_Data){
+      if(_CheckNodeDataIsNull(new_Data))
+        return;
+
+      var new_Node = new DoubleLinkedNode<T>(new_Data);
       
       if(_IsEmpty()){
-        _FirstAdd(newNode);
+        m_first = m_last = new_Node;
       } else {
         var currentNode = m_last;
-        m_last = newNode;
+        m_last = new_Node;
         currentNode.Next = m_last;
-        newNode.Previous = currentNode;
+        new_Node.Previous = currentNode;
       }
 
       m_count++;
+    }
+
+    /// <summary>
+    /// 插入已知目标节点的next位置
+    /// </summary>
+    /// <param name="new_Data"></param>
+    /// <param name="targetNode"></param>
+    /// <returns></returns>
+    public DoubleLinkedNode<T> InsertAtTargetDataByNext(T new_Data, DoubleLinkedNode<T> targetNode = null) {
+      if(_CheckNodeDataIsNull(new_Data))
+        return null;
+
+      var new_Node = new DoubleLinkedNode<T>(new_Data);
+
+      if (_IsEmpty())
+        m_first = m_last = new_Node;
+      else if (targetNode == null) {
+        new_Node = m_last;
+        Append(new_Data);
+      }else {
+        new_Node = _InsertByNext(targetNode, new_Data);
+      }
+
+      return new_Node;
     }
     
     /// <summary>
-    /// 向指定的链表元素添加
+    /// 插入已知目标节点的pre位置
     /// </summary>
-    /// <param name="direction">方向，previous表示向上添加，next表示向下添加</param>
-    /// <param name="newNode">添加元素</param>
-    /// <param name="targetNode">目标元素,默认是null，默认时根据direction判断是first还是last</param>
-    public void Add(Common.CSharp.Common.NodeDirection direction,DoubleLinkedNode<T> newNode, DoubleLinkedNode<T> targetNode = null) {
-      if(_CheckParamIsNull(newNode))
-        return;
+    /// <param name="new_Data"></param>
+    /// <param name="targetNode"></param>
+    /// <returns></returns>
+    public DoubleLinkedNode<T> InsertAtTargetDataByPre(T new_Data, DoubleLinkedNode<T> targetNode = null) {
+      if(_CheckNodeDataIsNull(new_Data))
+        return null;
+
+      var new_Node = new DoubleLinkedNode<T>(new_Data);
 
       if (_IsEmpty())
-        _FirstAdd(newNode);
-      else if (direction == Common.CSharp.Common.NodeDirection.Previous) {
-        if (targetNode == null) {
-          Prepend(newNode);
-          return;
-        }
-        _InsertNodeByNodePoint(direction, targetNode, newNode);
-      }
-      else {
-        if (targetNode == null) {
-          Append(newNode);
-          return;
-        }
-        _InsertNodeByNodePoint(direction,targetNode,newNode);
+        m_first = m_last = new_Node;
+      else if (targetNode == null) {
+        new_Node = m_first;
+        Prepend(new_Data);
+      }else {
+        new_Node = _InsertByPre(targetNode, new_Data);
       }
 
-      m_count++;
+      return new_Node;
     }
 
     /// <summary>
-    /// 删除方法，如果targetNode为null或则该链表不存在该节点，都会执行默认删除方法，
+    /// 删除节点，从next进行
     /// </summary>
-    /// <param name="direction">方向，previous表示向上添加，next表示向下添加</param>
-    /// <param name="targetNode">目标节点，默认为null，如果为null，则会根据方面判定frist或则last</param>
-    public void Delete(Common.CSharp.Common.NodeDirection direction,DoubleLinkedNode<T> targetNode = null) {
+    /// <param name="deleteData"></param>
+    /// <returns></returns>
+    public DoubleLinkedNode<T> DeleteAtDeleteDataByNext(T deleteData) {
       if (_IsEmpty())
-        return;
-      
+        return null;
+
+      DoubleLinkedNode<T> deleteNode = null;
+
       if (m_count == 1) {
-        _FirstAdd(null);
+        m_first = m_last = null;
+        deleteNode = m_first;
       }
       else {
-        if (targetNode == null) {
-          if (direction == Common.CSharp.Common.NodeDirection.Next) {
-            m_first = m_first.Next;
-            m_first.Previous = null;
-          }
-          else {
-            m_last = m_first.Next;
-            m_last.Next = null;
-          }
+        if (deleteData == null) {
+          m_first = m_first.Next;
+          m_first.Previous = null;
         }
         else {
-          targetNode = _GetElement(direction, m_first, targetNode);
-          _DoubleNodeLink(targetNode.Previous,targetNode.Next);
+          deleteNode = _GetNodeByNext(m_first, deleteData);
+          _DoubleNodeLink(deleteNode.Previous,deleteNode.Next);
         }
       }
+
+      return deleteNode;
+    }
+
+    /// <summary>
+    /// 删除节点，从pre进行
+    /// </summary>
+    /// <param name="deleteData"></param>
+    /// <returns></returns>
+    public DoubleLinkedNode<T> DeleteAtDeleteDataByPre(T deleteData) {
+      if (_IsEmpty())
+        return null;
       
-      m_count--;
+      DoubleLinkedNode<T> deleteNode = null;
+      
+      if (m_count == 1) {
+        m_first = m_last = null;
+        deleteNode = m_first;
+      }
+      else {
+        if (deleteData == null) {
+          m_last = m_last.Previous;
+          m_last.Next = null;
+        }
+        else {
+          deleteNode = _GetNodeByPre(m_last, deleteData);
+          _DoubleNodeLink(deleteNode.Previous,deleteNode.Next);
+        }
+      }
+
+      return deleteNode;
     }
 
     public void Clear(){
@@ -132,71 +188,84 @@ namespace Game.Scripts.CSharp.Link {
     private bool _IsEmpty(){
       return (Count == 0);
     }
-    
-    //首次添加，也可以用于删除唯一的元素
-    private void _FirstAdd(DoubleLinkedNode<T> newNode) {
-      if(_CheckParamIsNull(newNode))
-        return;
+
+    /// <summary>
+    /// 主要用于插入时的替换操作,根据节点的previous进行插入
+    /// </summary>
+    /// <param name="originNode"></param>
+    /// <param name="new_Data"></param>
+    /// <returns>返回插入的节点</returns>
+    private DoubleLinkedNode<T> _InsertByPre(DoubleLinkedNode<T> originNode, T new_Data) {
+      if(_CheckNodeIsNull(originNode) || _CheckNodeDataIsNull(new_Data))
+        return null;
+
+      var new_Node = new DoubleLinkedNode<T>(new_Data);
       
-      m_first = m_last = newNode;
+      new_Node.Next         = originNode;
+      if (originNode.Previous != null) {
+        new_Node.Previous     = originNode.Previous;
+        originNode.Previous.Next = new_Node; 
+      }
+      originNode.Previous      = new_Node;
+
+      return new_Node;
     }
 
     /// <summary>
-    /// 主要用于插入时的替换操作
+    /// 主要用于插入时的替换操作,根据节点的next进行插入
     /// </summary>
-    /// <param name="direction">方向</param>
-    /// <param name="originNode">原始元素</param>
-    /// <param name="newNode">新元素</param>
-    private void _InsertNodeByNodePoint(Common.CSharp.Common.NodeDirection direction,DoubleLinkedNode<T> originNode, DoubleLinkedNode<T> newNode) {
-      if(_CheckParamIsNull(originNode) || _CheckParamIsNull(newNode))
-        return;
-      
-      var currentNode = originNode;
-      if (direction == Common.CSharp.Common.NodeDirection.Previous) {
-        newNode.Next         = currentNode;
-        if (currentNode.Previous != null) {
-          newNode.Previous     = currentNode.Previous;
-          currentNode.Previous.Next = newNode; 
-        }
-        currentNode.Previous      = newNode;
-      }
-      else {
-        newNode.Previous = currentNode;
-        if (currentNode.Next != null) {
-          newNode.Next = currentNode.Next;
-          currentNode.Next.Previous = newNode;
-        }
-        currentNode.Next = newNode;
-      }
-    }
-
-    /// <summary>
-    /// 用于获取指定的元素
-    /// </summary>
-    /// <param name="direction">方向，用于是从next进行查询还是previous进行查询</param>
-    /// <param name="startNode">可以自行设置从哪个节点开始</param>
-    /// <param name="targetNode">指定目标元素，如果只知道data，可以自行构建一个Node，然后放入查询</param>
-    /// <returns></returns>
-    private DoubleLinkedNode<T> _GetElement(Common.CSharp.Common.NodeDirection direction,DoubleLinkedNode<T> startNode, DoubleLinkedNode<T> targetNode) {
-      if(_CheckParamIsNull(startNode) || _CheckParamIsNull(targetNode))
+    /// <param name="originNode"></param>
+    /// <param name="new_Data"></param>
+    /// <returns>返回插入的节点</returns>
+    private DoubleLinkedNode<T> _InsertByNext(DoubleLinkedNode<T> originNode, T new_Data) {
+      if(_CheckNodeIsNull(originNode) || _CheckNodeDataIsNull(new_Data))
         return null;
       
-      var current = startNode;
-
-      //该判定如果写在while循环中，可以减少代码，但是执行效率会变低，每次while都会作一次判断
-      if (direction == Common.CSharp.Common.NodeDirection.Next) {
-        while (current != null) {
-          if (current.Data.Equals(targetNode.Data))
-            return current;
-          current = current.Next;
-        }
+      var new_Node = new DoubleLinkedNode<T>(new_Data);
+      
+      new_Node.Previous = originNode;
+      if (originNode.Next != null) {
+        new_Node.Next = originNode.Next;
+        originNode.Next.Previous = new_Node;
       }
-      else {
-        while (current != null) {
-          if (current.Data.Equals(targetNode.Data))
-            return current;
-          current = current.Previous;
-        }
+      originNode.Next = new_Node;
+
+      return new_Node;
+    }
+
+    /// <summary>
+    /// 通过指定节点的next指向进行遍历查询
+    /// </summary>
+    /// <param name="startNode">开始节点</param>
+    /// <param name="targetData">目标节点数据</param>
+    /// <returns>返回删除节点</returns>
+    private DoubleLinkedNode<T> _GetNodeByNext(DoubleLinkedNode<T> startNode, T targetData) {
+      if(_CheckNodeIsNull(startNode) || _CheckNodeDataIsNull(targetData))
+        return null;
+
+      while (startNode != null) {
+        if (startNode.Data.Equals(targetData))
+          return startNode;
+        startNode = startNode.Next;
+      }
+
+      return null;
+    }
+
+    /// <summary>
+    /// 通过指定节点的previous指向进行遍历查询
+    /// </summary>
+    /// <param name="startNode">开始节点</param>
+    /// <param name="targetData">目标节点数据</param>
+    /// <returns>返回删除节点</returns>
+    private DoubleLinkedNode<T> _GetNodeByPre(DoubleLinkedNode<T> startNode, T targetData) {
+      if(_CheckNodeIsNull(startNode) || _CheckNodeDataIsNull(targetData))
+        return null;
+
+      while (startNode != null) {
+        if (startNode.Data.Equals(targetData))
+          return startNode;
+        startNode = startNode.Previous;
       }
 
       return null;
@@ -204,14 +273,14 @@ namespace Game.Scripts.CSharp.Link {
 
     //用于两个节点的相互指向，用于知道某个节点的前后两个指向，进行该节点的删除操作
     private void _DoubleNodeLink(DoubleLinkedNode<T> previousNode, DoubleLinkedNode<T> nextNode) {
-      if(_CheckParamIsNull(previousNode) || _CheckParamIsNull(nextNode))
+      if(_CheckNodeIsNull(previousNode) || _CheckNodeIsNull(nextNode))
         return;
       
       previousNode.Next = nextNode;
       nextNode.Previous = previousNode;
     }
     
-    private bool _CheckParamIsNull(DoubleLinkedNode<T> node) {
+    private bool _CheckNodeIsNull(DoubleLinkedNode<T> node) {
       if (node == null) {
         Debug.LogAssertion("The node is null");
         return true;
@@ -219,7 +288,16 @@ namespace Game.Scripts.CSharp.Link {
 
       return false;
     }
-    
+
+    private bool _CheckNodeDataIsNull(T nodeData) {
+      if (nodeData == null) {
+        Debug.LogAssertion("The node is null");
+        return true;
+      }
+
+      return false;
+    }
+
     /*****************************迭代器实现*************************************/
     internal class DoubleLinkedListEnumerator : IEnumerator<T> {
       private DoubleLinkedNode<T> m_currentNode;

@@ -1,22 +1,28 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Game.Scripts.Common.CSharp {
     public static class Common {
-        public static void S_CheckIndexOutForEqual(int a, int b) {
+        public static bool CheckIndexOutForEqual(int a, int b) {
+            bool result = false;
+            
             if(a < 0 || a >= b){
-                throw new Exception("error: 数组下标超出数组范围");
+                Debug.LogAssertion("数组下标超出数组范围");
+                result = true;
             }
+
+            return result;
         }
 
-        public static void S_CheckIndexOutForNotEqual(int a, int b) {
+        public static bool CheckIndexOutForNotEqual(int a, int b) {
+            bool result = false;
+            
             if(a < 0 || a > b){
-                throw new Exception("error: 数组下标超出数组范围");
+                Debug.LogAssertion("数组下标超出数组范围");
+                result = true;
             }
-        }
 
-        public enum NodeDirection {
-            Previous,
-            Next
+            return result;
         }
     }
 }

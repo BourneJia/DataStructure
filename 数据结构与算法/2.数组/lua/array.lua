@@ -18,17 +18,12 @@ function ArrayList:Insert(index, data)
   assert(type(index) == "number", "index is not a number")
   -- assert(self.mCap == self.mData, "数组没有多余空间进行添加") 还是去扩容算了
   assert(index >= 1 and index <= self.mLength+1, "Index was outside the bounds of the list")
+
   if(self.mCap == self.mLength)
   then
     self:resize()
   end
-  -- lua 的for循环感觉不太适合条件遍历呀......有点难把控
-  -- for i = self.mLength+1, self.mLength-index+2, -1 do
-  --   print("self.mData["..i.."]:"..tostring(self.mData[i]))
-  --   print("self.mData["..(i+1).."]:"..tostring(self.mData[i+1]))
-  --   self.mData[i] = self.mData[i-1]
-  -- end
-  --lua中的下标从1开始.......
+
   local i = self.mLength+1
   while(i > index)
   do  
@@ -71,6 +66,11 @@ function ArrayList:resize()
   self.mCap = self.mCap * 2
 end
 
+
+function ArrayList:_checkIndexOut(index)
+  assert(type(index) == "number", "index is not a int")
+  assert(index > 0 and index <= self.mLength+1, "Index was outside the bounds of the list")
+end
 
 -- 测试
 local a = ArrayList:New(8)
