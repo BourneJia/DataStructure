@@ -1,45 +1,73 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Game.Scripts.Common.CSharp;
 using Game.Scripts.CSharp.Array;
 using Game.Scripts.CSharp.Link;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Game.Scripts {
     public class Game : MonoBehaviour {
         // Start is called before the first frame update
+        DoubleLinkedList<int> double_list = new DoubleLinkedList<int>();
+        ChachePool<DoubleLinkedNode<int>> chachePool = new ChachePool<DoubleLinkedNode<int>>();
+        
         void Start() {
-            // var a = new Array<int>();
-            // a[0] = 1;
-            // a[1] = 2;
-            // a[2] = 3;
-            // a[3] = 4;
-            // a[4] = 5;
-            // a[5] = 6;
-            // foreach (var value in a.data) {
-            //     Debug.Log(value);
-            // }
-            var double_list = new DoubleLinkedList<int>();
-            double_list.Append(23);
-            double_list.Append(324);
-            double_list.Append(564);
-            double_list.Append(12);
-            double_list.Append(6);
-            // double_list.Prepend(7);
-            // double_list.Prepend(76);
-            // double_list.Prepend(45);
-            // double_list.Prepend(75);
-            // double_list.Prepend(345);
-            // double_list.InsertAtTargetDataByNext(453);
-            // double_list.DeleteAtDeleteDataByNext(564);
-            foreach (var value in double_list) {
-                Debug.Log(value);
+
+            for (int i = 0; i < 1000; i++) {
+                DoubleLinkedNode<int> a = new DoubleLinkedNode<int>();
+                chachePool.Put(a);
             }
+
+            double_list.CachePool = chachePool;
+
+            if (chachePool.Get() != null) {
+                
+            }
+            else {
+                Debug.Log("is null");
+            }
+
+            // double_list.Append(5);
+            // double_list.Append(6);
+            // double_list.PrintAll();
+            
+            
         }
 
         // Update is called once per frame
-        void Update()
-        {
-        
+        void Update() {
+            
+        }
+
+        public class Student<T> {
+
+            // private ChachePool<Student<T>> chachePool = null;
+            //
+            // public Student(ChachePool<Student<T>> _chachePool) {
+            //     
+            // }
+
+            public string Name {
+                get;
+                set;
+            }
+
+            public int Age {
+                get;
+                set;
+            }
+
+            public string Address {
+                get;
+                set;
+            }
+
+            public T value {
+                get;
+                set;
+            }
         }
     }   
 }

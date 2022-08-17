@@ -16,13 +16,17 @@ namespace Game.Scripts.CSharp.Link {
     private DoubleLinkedNode<T> m_first = null;
     private DoubleLinkedNode<T> m_last  = null;
     private int                 m_count = 0;
+    private ChachePool<DoubleLinkedNode<T>> m_cachePool = new ChachePool<DoubleLinkedNode<T>>();
 
-    private DoubleLinkedNode<T> m_replaceCache = new DoubleLinkedNode<T>();
+    // public ChachePool<DoubleLinkedNode<T>> CachePool {
+    //   get { return m_cachePool; }
+    //   set { m_cachePool = value; }
+    // }
 
     public DoubleLinkedNode<T> First => m_first;
     public DoubleLinkedNode<T> Last => m_last;
     public int                Count => m_count;
-
+    
     /// <summary>
     /// 链表首位进行插入操作,插入在首节点之前，插入的节点可以通过First获取
     /// </summary>
@@ -53,7 +57,11 @@ namespace Game.Scripts.CSharp.Link {
       if(_CheckNodeDataIsNull(new_Data))
         return;
 
-      var new_Node = m_replaceCache;
+      //var new_Node = new DoubleLinkedNode<T>(new_Data);
+      //chachePool.Put(new DoubleLinkedNode<T>(new_Data));
+      // var new_Node = chachePool.Get();
+      // new_Node.Data = new_Data;
+      var new_Node = m_cachePool.Get();
       new_Node.Data = new_Data;
       
       if(_IsEmpty()){
@@ -116,6 +124,23 @@ namespace Game.Scripts.CSharp.Link {
       return new_Node;
     }
 
+    public DoubleLinkedNode<T> DeleteFirstNode() {
+      if (_IsEmpty())
+        return null;
+    
+      DoubleLinkedNode<T> deleteNode = m_first;
+    
+      if (m_count == 1) {
+        m_first = m_last = null;
+      }
+      else {
+        m_first = m_first.Next;
+        m_first.Previous = null;
+      }
+
+      return deleteNode;
+    }
+
     /// <summary>
     /// 删除节点，从next进行
     /// </summary>
@@ -125,11 +150,10 @@ namespace Game.Scripts.CSharp.Link {
       if (_IsEmpty())
         return null;
 
-      DoubleLinkedNode<T> deleteNode = null;
+      DoubleLinkedNode<T> deleteNode = m_first;
 
       if (m_count == 1) {
         m_first = m_last = null;
-        deleteNode = m_first;
       }
       else {
         if (deleteData == null) {
@@ -154,11 +178,10 @@ namespace Game.Scripts.CSharp.Link {
       if (_IsEmpty())
         return null;
       
-      DoubleLinkedNode<T> deleteNode = null;
+      DoubleLinkedNode<T> deleteNode = m_last;
       
       if (m_count == 1) {
         m_first = m_last = null;
-        deleteNode = m_first;
       }
       else {
         if (deleteData == null) {
@@ -177,7 +200,7 @@ namespace Game.Scripts.CSharp.Link {
     public void Clear(){
       m_count = 0;
       m_first = m_last = null;
-      m_replaceCache = null;
+      //m_replaceCache = null;
     }
     
     public void PrintAll() {
@@ -301,6 +324,12 @@ namespace Game.Scripts.CSharp.Link {
       }
 
       return false;
+    }
+
+    private bool _CheckNodeIsFirstOrLast(T nodeData) {
+      if (nodeData.Equals(m_first.Data) || nodeData.Equals(m_last.Data)) {
+        
+      }
     }
 
     /*****************************迭代器实现*************************************/
