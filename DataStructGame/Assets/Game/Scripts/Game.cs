@@ -11,63 +11,33 @@ namespace Game.Scripts {
     public class Game : MonoBehaviour {
         // Start is called before the first frame update
         DoubleLinkedList<int> double_list = new DoubleLinkedList<int>();
-        ChachePool<DoubleLinkedNode<int>> chachePool = new ChachePool<DoubleLinkedNode<int>>();
+        //ChachePool<int> chachePool = new ChachePool<int>();
         
         void Start() {
-
-            for (int i = 0; i < 1000; i++) {
-                DoubleLinkedNode<int> a = new DoubleLinkedNode<int>();
-                chachePool.Put(a);
+            var i = 0;
+            while (i < 500) {
+                double_list.Append(i+i);
+                i++;
             }
 
-            double_list.CachePool = chachePool;
-
-            if (chachePool.Get() != null) {
-                
-            }
-            else {
-                Debug.Log("is null");
+            var j = 0;
+            while (j < 200) {
+                var deleteNode = double_list.DeleteFirstNode();
+                //hachePool.Put(deleteNode);
+                j++;
             }
 
-            // double_list.Append(5);
-            // double_list.Append(6);
-            // double_list.PrintAll();
+            double_list.PrintAll();
             
+            Debug.Log("*******************************************************");
             
+            double_list.CachePool.PrintAll();
         }
 
         // Update is called once per frame
         void Update() {
             
         }
-
-        public class Student<T> {
-
-            // private ChachePool<Student<T>> chachePool = null;
-            //
-            // public Student(ChachePool<Student<T>> _chachePool) {
-            //     
-            // }
-
-            public string Name {
-                get;
-                set;
-            }
-
-            public int Age {
-                get;
-                set;
-            }
-
-            public string Address {
-                get;
-                set;
-            }
-
-            public T value {
-                get;
-                set;
-            }
-        }
+        
     }   
 }

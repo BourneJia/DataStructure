@@ -16,12 +16,9 @@ namespace Game.Scripts.CSharp.Link {
     private DoubleLinkedNode<T> m_first = null;
     private DoubleLinkedNode<T> m_last  = null;
     private int                 m_count = 0;
-    private ChachePool<DoubleLinkedNode<T>> m_cachePool = new ChachePool<DoubleLinkedNode<T>>();
+    private ChachePool<T> m_cachePool = new ChachePool<T>();
 
-    // public ChachePool<DoubleLinkedNode<T>> CachePool {
-    //   get { return m_cachePool; }
-    //   set { m_cachePool = value; }
-    // }
+    public ChachePool<T> CachePool => m_cachePool;
 
     public DoubleLinkedNode<T> First => m_first;
     public DoubleLinkedNode<T> Last => m_last;
@@ -57,12 +54,12 @@ namespace Game.Scripts.CSharp.Link {
       if(_CheckNodeDataIsNull(new_Data))
         return;
 
-      //var new_Node = new DoubleLinkedNode<T>(new_Data);
+      var new_Node = new DoubleLinkedNode<T>(new_Data);
       //chachePool.Put(new DoubleLinkedNode<T>(new_Data));
       // var new_Node = chachePool.Get();
       // new_Node.Data = new_Data;
-      var new_Node = m_cachePool.Get();
-      new_Node.Data = new_Data;
+      // var new_Node = m_cachePool.GetNodeInstance();
+      // new_Node.Data = new_Data;
       
       if(_IsEmpty()){
         m_first = m_last = new_Node;
@@ -129,7 +126,9 @@ namespace Game.Scripts.CSharp.Link {
         return null;
     
       DoubleLinkedNode<T> deleteNode = m_first;
-    
+      
+      m_cachePool.Put(deleteNode);
+
       if (m_count == 1) {
         m_first = m_last = null;
       }
@@ -151,6 +150,8 @@ namespace Game.Scripts.CSharp.Link {
         return null;
 
       DoubleLinkedNode<T> deleteNode = m_first;
+      
+      m_cachePool.Put(deleteNode);
 
       if (m_count == 1) {
         m_first = m_last = null;
@@ -179,6 +180,8 @@ namespace Game.Scripts.CSharp.Link {
         return null;
       
       DoubleLinkedNode<T> deleteNode = m_last;
+      
+      m_cachePool.Put(deleteNode);
       
       if (m_count == 1) {
         m_first = m_last = null;
@@ -326,11 +329,11 @@ namespace Game.Scripts.CSharp.Link {
       return false;
     }
 
-    private bool _CheckNodeIsFirstOrLast(T nodeData) {
-      if (nodeData.Equals(m_first.Data) || nodeData.Equals(m_last.Data)) {
-        
-      }
-    }
+    // private bool _CheckNodeIsFirstOrLast(T nodeData) {
+    //   if (nodeData.Equals(m_first.Data) || nodeData.Equals(m_last.Data)) {
+    //     
+    //   }
+    // }
 
     /*****************************迭代器实现*************************************/
     internal class DoubleLinkedListEnumerator : IEnumerator<T> {
@@ -415,6 +418,12 @@ namespace Game.Scripts.CSharp.Link {
     public DoubleLinkedNode<T> Previous {
       get => m_previous;
       set => m_previous = value;
+    }
+
+    public void Clear() {
+      m_data = default(T);
+      m_previous = null;
+      m_next = null;
     }
   }
 }
