@@ -18,6 +18,7 @@ namespace Game.Scripts.CSharp.Array
       private int m_length               = 0;
       public T[] data   => m_data;
       public int capacity => m_capacity;
+      public int length => m_length;
 
       public T this[int index] {
         get {

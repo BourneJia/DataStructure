@@ -16,13 +16,13 @@ namespace Game.Scripts.CSharp.Link {
     private DoubleLinkedNode<T> m_first = null;
     private DoubleLinkedNode<T> m_last  = null;
     private int                 m_count = 0;
-    private ChachePool<T> m_cachePool = new ChachePool<T>();
+    //private CachePool<T> m_cachePool = new CachePool<T>();
+    private DoubleNodeListPool<T> m_doubleNodeListPool = new DoubleNodeListPool<T>();
 
-    public ChachePool<T> CachePool => m_cachePool;
-
+    //public CachePool<T> CachePool    => m_cachePool;
     public DoubleLinkedNode<T> First => m_first;
-    public DoubleLinkedNode<T> Last => m_last;
-    public int                Count => m_count;
+    public DoubleLinkedNode<T> Last  => m_last;
+    public int                Count  => m_count;
     
     /// <summary>
     /// 链表首位进行插入操作,插入在首节点之前，插入的节点可以通过First获取
@@ -54,13 +54,8 @@ namespace Game.Scripts.CSharp.Link {
       if(_CheckNodeDataIsNull(new_Data))
         return;
 
-      var new_Node = new DoubleLinkedNode<T>(new_Data);
-      //chachePool.Put(new DoubleLinkedNode<T>(new_Data));
-      // var new_Node = chachePool.Get();
-      // new_Node.Data = new_Data;
-      // var new_Node = m_cachePool.GetNodeInstance();
-      // new_Node.Data = new_Data;
-      
+      var new_Node = m_doubleNodeListPool.GetNodeInstance(new_Data);//new DoubleLinkedNode<T>(new_Data);
+
       if(_IsEmpty()){
         m_first = m_last = new_Node;
       } else {
@@ -125,9 +120,10 @@ namespace Game.Scripts.CSharp.Link {
       if (_IsEmpty())
         return null;
     
-      DoubleLinkedNode<T> deleteNode = m_first;
+      DoubleLinkedNode<T> deleteNode = m_doubleNodeListPool.DeleteNodeByData(m_first.Data);
       
-      m_cachePool.Put(deleteNode);
+      //m_cachePool.Put(deleteNode);
+      //deleteNode.Clear();
 
       if (m_count == 1) {
         m_first = m_last = null;
@@ -136,6 +132,9 @@ namespace Game.Scripts.CSharp.Link {
         m_first = m_first.Next;
         m_first.Previous = null;
       }
+      
+      //deleteNode.Clear();
+      m_count--;
 
       return deleteNode;
     }
@@ -151,7 +150,7 @@ namespace Game.Scripts.CSharp.Link {
 
       DoubleLinkedNode<T> deleteNode = m_first;
       
-      m_cachePool.Put(deleteNode);
+      //m_cachePool.Put(deleteNode);
 
       if (m_count == 1) {
         m_first = m_last = null;
@@ -167,6 +166,8 @@ namespace Game.Scripts.CSharp.Link {
         }
       }
 
+      m_count--;
+      
       return deleteNode;
     }
 
@@ -181,7 +182,7 @@ namespace Game.Scripts.CSharp.Link {
       
       DoubleLinkedNode<T> deleteNode = m_last;
       
-      m_cachePool.Put(deleteNode);
+      //m_cachePool.Put(deleteNode);
       
       if (m_count == 1) {
         m_first = m_last = null;
@@ -197,6 +198,8 @@ namespace Game.Scripts.CSharp.Link {
         }
       }
 
+      m_count--;
+      
       return deleteNode;
     }
 
@@ -204,6 +207,8 @@ namespace Game.Scripts.CSharp.Link {
       m_count = 0;
       m_first = m_last = null;
       //m_replaceCache = null;
+      //m_cachePool.Clear();
+      m_doubleNodeListPool = null;
     }
     
     public void PrintAll() {
@@ -328,13 +333,7 @@ namespace Game.Scripts.CSharp.Link {
 
       return false;
     }
-
-    // private bool _CheckNodeIsFirstOrLast(T nodeData) {
-    //   if (nodeData.Equals(m_first.Data) || nodeData.Equals(m_last.Data)) {
-    //     
-    //   }
-    // }
-
+    
     /*****************************迭代器实现*************************************/
     internal class DoubleLinkedListEnumerator : IEnumerator<T> {
       private DoubleLinkedNode<T> m_currentNode;
