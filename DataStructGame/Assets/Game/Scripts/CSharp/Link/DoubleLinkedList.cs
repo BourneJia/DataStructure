@@ -19,6 +19,9 @@ namespace Game.Scripts.CSharp.Link {
     //private CachePool<T> m_cachePool = new CachePool<T>();
     private DoubleNodeListPool<T> m_doubleNodeListPool = new DoubleNodeListPool<T>();
 
+    private DoubleNodeArrayPool<T> m_doubleNodeArrayPool = new DoubleNodeArrayPool<T>();
+    //private DoubleNodeArrayPool<T> m_doubleNodeArrayPool = new DoubleNodeArrayPool<T>();
+
     //public CachePool<T> CachePool    => m_cachePool;
     public DoubleLinkedNode<T> First => m_first;
     public DoubleLinkedNode<T> Last  => m_last;
@@ -32,7 +35,7 @@ namespace Game.Scripts.CSharp.Link {
       if(_CheckNodeDataIsNull(new_Data))
         return;
 
-      var new_Node = new DoubleLinkedNode<T>(new_Data);
+      var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
       
       if(_IsEmpty()){
         m_first = m_last = new_Node;
@@ -54,7 +57,9 @@ namespace Game.Scripts.CSharp.Link {
       if(_CheckNodeDataIsNull(new_Data))
         return;
 
-      var new_Node = m_doubleNodeListPool.GetNodeInstance(new_Data);//new DoubleLinkedNode<T>(new_Data);
+      //var new_Node = m_doubleNodeListPool.GetNodeInstance(new_Data);//new DoubleLinkedNode<T>(new_Data);
+      //var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
+      var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
 
       if(_IsEmpty()){
         m_first = m_last = new_Node;
@@ -74,23 +79,23 @@ namespace Game.Scripts.CSharp.Link {
     /// <param name="new_Data"></param>
     /// <param name="targetNode"></param>
     /// <returns></returns>
-    public DoubleLinkedNode<T> InsertAtTargetDataByNext(T new_Data, DoubleLinkedNode<T> targetNode = null) {
-      if(_CheckNodeDataIsNull(new_Data))
-        return null;
-
-      var new_Node = new DoubleLinkedNode<T>(new_Data);
-
-      if (_IsEmpty())
-        m_first = m_last = new_Node;
-      else if (targetNode == null) {
-        new_Node = m_last;
-        Append(new_Data);
-      }else {
-        new_Node = _InsertByNext(targetNode, new_Data);
-      }
-
-      return new_Node;
-    }
+    // public DoubleLinkedNode<T> InsertAtTargetDataByNext(T new_Data, DoubleLinkedNode<T> targetNode = null) {
+    //   if(_CheckNodeDataIsNull(new_Data))
+    //     return null;
+    //
+    //   var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
+    //
+    //   if (_IsEmpty())
+    //     m_first = m_last = new_Node;
+    //   else if (targetNode == null) {
+    //     new_Node = m_last;
+    //     Append(new_Data);
+    //   }else {
+    //     new_Node = _InsertByNext(targetNode, new_Data);
+    //   }
+    //
+    //   return new_Node;
+    // }
     
     /// <summary>
     /// 插入已知目标节点的pre位置
@@ -98,105 +103,36 @@ namespace Game.Scripts.CSharp.Link {
     /// <param name="new_Data"></param>
     /// <param name="targetNode"></param>
     /// <returns></returns>
-    public DoubleLinkedNode<T> InsertAtTargetDataByPre(T new_Data, DoubleLinkedNode<T> targetNode = null) {
-      if(_CheckNodeDataIsNull(new_Data))
-        return null;
-
-      var new_Node = new DoubleLinkedNode<T>(new_Data);
-
-      if (_IsEmpty())
-        m_first = m_last = new_Node;
-      else if (targetNode == null) {
-        new_Node = m_first;
-        Prepend(new_Data);
-      }else {
-        new_Node = _InsertByPre(targetNode, new_Data);
-      }
-
-      return new_Node;
-    }
-
-    public DoubleLinkedNode<T> DeleteFirstNode() {
-      if (_IsEmpty())
-        return null;
-    
-      DoubleLinkedNode<T> deleteNode = m_doubleNodeListPool.DeleteNodeByData(m_first.Data);
-      
-      //m_cachePool.Put(deleteNode);
-      //deleteNode.Clear();
-
-      if (m_count == 1) {
-        m_first = m_last = null;
-      }
-      else {
-        m_first = m_first.Next;
-        m_first.Previous = null;
-      }
-      
-      //deleteNode.Clear();
-      m_count--;
-
-      return deleteNode;
-    }
+    // public DoubleLinkedNode<T> InsertAtTargetDataByPre(T new_Data, DoubleLinkedNode<T> targetNode = null) {
+    //   if(_CheckNodeDataIsNull(new_Data))
+    //     return null;
+    //
+    //   var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
+    //
+    //   if (_IsEmpty())
+    //     m_first = m_last = new_Node;
+    //   else if (targetNode == null) {
+    //     new_Node = m_first;
+    //     Prepend(new_Data);
+    //   }else {
+    //     new_Node = _InsertByPre(targetNode, new_Data);
+    //   }
+    //
+    //   return new_Node;
+    // }
 
     /// <summary>
     /// 删除节点，从next进行
     /// </summary>
     /// <param name="deleteData"></param>
     /// <returns></returns>
-    public DoubleLinkedNode<T> DeleteAtDeleteDataByNext(T deleteData) {
+    public DoubleLinkedNode<T> DeleteAtDeleteData(T deleteData) {
       if (_IsEmpty())
         return null;
 
-      DoubleLinkedNode<T> deleteNode = m_first;
+      DoubleLinkedNode<T> deleteNode = m_doubleNodeArrayPool.DeleteNode(deleteData);
       
-      //m_cachePool.Put(deleteNode);
-
-      if (m_count == 1) {
-        m_first = m_last = null;
-      }
-      else {
-        if (deleteData == null) {
-          m_first = m_first.Next;
-          m_first.Previous = null;
-        }
-        else {
-          deleteNode = _GetNodeByNext(m_first, deleteData);
-          _DoubleNodeLink(deleteNode.Previous,deleteNode.Next);
-        }
-      }
-
-      m_count--;
-      
-      return deleteNode;
-    }
-
-    /// <summary>
-    /// 删除节点，从pre进行
-    /// </summary>
-    /// <param name="deleteData"></param>
-    /// <returns></returns>
-    public DoubleLinkedNode<T> DeleteAtDeleteDataByPre(T deleteData) {
-      if (_IsEmpty())
-        return null;
-      
-      DoubleLinkedNode<T> deleteNode = m_last;
-      
-      //m_cachePool.Put(deleteNode);
-      
-      if (m_count == 1) {
-        m_first = m_last = null;
-      }
-      else {
-        if (deleteData == null) {
-          m_last = m_last.Previous;
-          m_last.Next = null;
-        }
-        else {
-          deleteNode = _GetNodeByPre(m_last, deleteData);
-          _DoubleNodeLink(deleteNode.Previous,deleteNode.Next);
-        }
-      }
+      _DoubleNodeLink(deleteNode.Previous,deleteNode.Next);
 
       m_count--;
       
