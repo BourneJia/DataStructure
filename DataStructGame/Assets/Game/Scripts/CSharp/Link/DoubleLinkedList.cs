@@ -16,13 +16,8 @@ namespace Game.Scripts.CSharp.Link {
     private DoubleLinkedNode<T> m_first = null;
     private DoubleLinkedNode<T> m_last  = null;
     private int                 m_count = 0;
-    //private CachePool<T> m_cachePool = new CachePool<T>();
-    private DoubleNodeListPool<T> m_doubleNodeListPool = new DoubleNodeListPool<T>();
-
     private DoubleNodeArrayPool<T> m_doubleNodeArrayPool = new DoubleNodeArrayPool<T>();
-    //private DoubleNodeArrayPool<T> m_doubleNodeArrayPool = new DoubleNodeArrayPool<T>();
-
-    //public CachePool<T> CachePool    => m_cachePool;
+ 
     public DoubleLinkedNode<T> First => m_first;
     public DoubleLinkedNode<T> Last  => m_last;
     public int                Count  => m_count;
@@ -44,6 +39,7 @@ namespace Game.Scripts.CSharp.Link {
         m_first = new_Node;
         new_Node.Next = currentNode;
         currentNode.Previous = new_Node;
+        new_Node.Previous = null;
       }
 
       m_count++;
@@ -58,7 +54,7 @@ namespace Game.Scripts.CSharp.Link {
         return;
 
       //var new_Node = m_doubleNodeListPool.GetNodeInstance(new_Data);//new DoubleLinkedNode<T>(new_Data);
-      //var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
+      //var new_Node = new DoubleLinkedNode<T>(new_Data);
       var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
 
       if(_IsEmpty()){
@@ -68,6 +64,7 @@ namespace Game.Scripts.CSharp.Link {
         m_last = new_Node;
         currentNode.Next = m_last;
         new_Node.Previous = currentNode;
+        new_Node.Next = null;
       }
 
       m_count++;
@@ -79,23 +76,23 @@ namespace Game.Scripts.CSharp.Link {
     /// <param name="new_Data"></param>
     /// <param name="targetNode"></param>
     /// <returns></returns>
-    // public DoubleLinkedNode<T> InsertAtTargetDataByNext(T new_Data, DoubleLinkedNode<T> targetNode = null) {
-    //   if(_CheckNodeDataIsNull(new_Data))
-    //     return null;
-    //
-    //   var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
-    //
-    //   if (_IsEmpty())
-    //     m_first = m_last = new_Node;
-    //   else if (targetNode == null) {
-    //     new_Node = m_last;
-    //     Append(new_Data);
-    //   }else {
-    //     new_Node = _InsertByNext(targetNode, new_Data);
-    //   }
-    //
-    //   return new_Node;
-    // }
+    public DoubleLinkedNode<T> InsertAtTargetDataByNext(T new_Data, DoubleLinkedNode<T> targetNode = null) {
+      if(_CheckNodeDataIsNull(new_Data))
+        return null;
+    
+      var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
+    
+      if (_IsEmpty())
+        m_first = m_last = new_Node;
+      else if (targetNode == null) {
+        new_Node = m_last;
+        Append(new_Data);
+      }else {
+        new_Node = _InsertByNext(targetNode, new_Data);
+      }
+    
+      return new_Node;
+    }
     
     /// <summary>
     /// 插入已知目标节点的pre位置
@@ -103,23 +100,23 @@ namespace Game.Scripts.CSharp.Link {
     /// <param name="new_Data"></param>
     /// <param name="targetNode"></param>
     /// <returns></returns>
-    // public DoubleLinkedNode<T> InsertAtTargetDataByPre(T new_Data, DoubleLinkedNode<T> targetNode = null) {
-    //   if(_CheckNodeDataIsNull(new_Data))
-    //     return null;
-    //
-    //   var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
-    //
-    //   if (_IsEmpty())
-    //     m_first = m_last = new_Node;
-    //   else if (targetNode == null) {
-    //     new_Node = m_first;
-    //     Prepend(new_Data);
-    //   }else {
-    //     new_Node = _InsertByPre(targetNode, new_Data);
-    //   }
-    //
-    //   return new_Node;
-    // }
+    public DoubleLinkedNode<T> InsertAtTargetDataByPre(T new_Data, DoubleLinkedNode<T> targetNode = null) {
+      if(_CheckNodeDataIsNull(new_Data))
+        return null;
+    
+      var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
+    
+      if (_IsEmpty())
+        m_first = m_last = new_Node;
+      else if (targetNode == null) {
+        new_Node = m_first;
+        Prepend(new_Data);
+      }else {
+        new_Node = _InsertByPre(targetNode, new_Data);
+      }
+    
+      return new_Node;
+    }
 
     /// <summary>
     /// 删除节点，从next进行
@@ -131,30 +128,31 @@ namespace Game.Scripts.CSharp.Link {
         return null;
 
       DoubleLinkedNode<T> deleteNode = m_doubleNodeArrayPool.DeleteNode(deleteData);
-      
-      _DoubleNodeLink(deleteNode.Previous,deleteNode.Next);
 
-      m_count--;
-      
+      if (deleteData != null) {
+        _DoubleNodeLink(deleteNode.Previous,deleteNode.Next);
+        m_count--;
+      }
+
       return deleteNode;
     }
 
     public void Clear(){
       m_count = 0;
       m_first = m_last = null;
-      //m_replaceCache = null;
-      //m_cachePool.Clear();
-      m_doubleNodeListPool = null;
+      m_doubleNodeArrayPool = null;
     }
     
     public void PrintAll() {
       var current = m_first;
       var i = 0;
+      
       while (current != null) {
         Debug.Log("List["+i+"]:"+ current.Data.ToString());
         current = current.Next;
         i++;
       }
+      
     }
     
     private bool _IsEmpty(){
@@ -171,7 +169,7 @@ namespace Game.Scripts.CSharp.Link {
       if(_CheckNodeIsNull(originNode) || _CheckNodeDataIsNull(new_Data))
         return null;
 
-      var new_Node = new DoubleLinkedNode<T>(new_Data);
+      var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
       
       new_Node.Next         = originNode;
       if (originNode.Previous != null) {
@@ -192,8 +190,8 @@ namespace Game.Scripts.CSharp.Link {
     private DoubleLinkedNode<T> _InsertByNext(DoubleLinkedNode<T> originNode, T new_Data) {
       if(_CheckNodeIsNull(originNode) || _CheckNodeDataIsNull(new_Data))
         return null;
-      
-      var new_Node = new DoubleLinkedNode<T>(new_Data);
+
+      var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
       
       new_Node.Previous = originNode;
       if (originNode.Next != null) {
@@ -245,11 +243,29 @@ namespace Game.Scripts.CSharp.Link {
 
     //用于两个节点的相互指向，用于知道某个节点的前后两个指向，进行该节点的删除操作
     private void _DoubleNodeLink(DoubleLinkedNode<T> previousNode, DoubleLinkedNode<T> nextNode) {
-      if(_CheckNodeIsNull(previousNode) || _CheckNodeIsNull(nextNode))
-        return;
+      //该节点为首节点
+      if (previousNode == null && nextNode != null) {
+        m_first = nextNode;
+        m_first.Previous = null;
+      }
       
-      previousNode.Next = nextNode;
-      nextNode.Previous = previousNode;
+      //该节点为尾节点
+      if(previousNode != null && nextNode == null) {
+        m_last = previousNode;
+        m_last.Next = null;
+      }
+
+      //节点在中间范围
+      if (previousNode != null && nextNode != null) {
+        previousNode.Next = nextNode;
+        nextNode.Previous = previousNode;
+      }
+
+      //只有一个节点
+      if (previousNode == null && nextNode == null) {
+        m_first = m_last = null;
+      }
+
     }
     
     private bool _CheckNodeIsNull(DoubleLinkedNode<T> node) {

@@ -9,24 +9,70 @@ using Random = UnityEngine.Random;
 
 namespace Game.Scripts {
     public class Game : MonoBehaviour {
-        // Start is called before the first frame update
         DoubleLinkedList<int> double_list = new DoubleLinkedList<int>();
-
-        private Array<DoubleLinkedNode<int>> array = new Array<DoubleLinkedNode<int>>();
-        //CachePool<int> cachePool = new CachePool<int>();
-        int i = 0;
+        // int i = 0;
         
         void Start() {
-
+            // int i = 0;
+            // while (i < 10) {
+            //     double_list.Append(i+i);
+            //     
+            //     i++;
+            // }
+            //
+            // double_list.PrintAll();
+            //
+            // int j = 0;
+            // while (j < 5) {
+            //     double_list.DeleteAtDeleteData(double_list.First.Data);
+            //
+            //     j++;
+            // }
+            //
+            // double_list.PrintAll();
+            //
+            // double_list.Append(0);
+            //
+            // double_list.PrintAll();
+            // int z = 0;
+            // while (z < 10) {
+            //     double_list.Append(z+z);
+            //     
+            //     z++;
+            // }
+            //
+            // double_list.PrintAll();
+            
+            
+            
+            // int x = 0;
+            // while (x < 5) {
+            //     double_list.DeleteAtDeleteData(double_list.First.Data);
+            //
+            //     x++;
+            // }
+            //
+            // double_list.PrintAll();
         }
 
         // Update is called once per frame
         void Update() {
-            while (i < 500) {
+            int i = 0;
+            while (i < 100) {
                 double_list.Append(i+i);
                 
                 i++;
             }
+            
+            double_list.PrintAll();
+            
+            int j = 0;
+            while (j < 50) {
+                double_list.DeleteAtDeleteData(double_list.First.Data);
+            
+                j++;
+            }
+            
             double_list.PrintAll();
         }
         
