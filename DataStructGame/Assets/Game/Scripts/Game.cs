@@ -66,14 +66,14 @@ namespace Game.Scripts {
             
             double_list.PrintAll();
             
-            int j = 0;
-            while (j < 50) {
-                double_list.DeleteAtDeleteData(double_list.First.Data);
-            
-                j++;
-            }
-            
-            double_list.PrintAll();
+            // int j = 0;
+            // while (j < 50) {
+            //     double_list.DeleteAtDeleteData(double_list.First.Data);
+            //
+            //     j++;
+            // }
+            //
+            // double_list.PrintAll();
         }
         
     }   

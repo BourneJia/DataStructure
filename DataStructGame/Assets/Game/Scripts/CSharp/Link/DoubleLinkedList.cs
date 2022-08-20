@@ -17,7 +17,8 @@ namespace Game.Scripts.CSharp.Link {
     private DoubleLinkedNode<T> m_last  = null;
     private int                 m_count = 0;
     private DoubleNodeArrayPool<T> m_doubleNodeArrayPool = new DoubleNodeArrayPool<T>();
- 
+    private DoubleNodeListPool<T>  m_doubleNodeListPool = new DoubleNodeListPool<T>();
+
     public DoubleLinkedNode<T> First => m_first;
     public DoubleLinkedNode<T> Last  => m_last;
     public int                Count  => m_count;
@@ -55,7 +56,8 @@ namespace Game.Scripts.CSharp.Link {
 
       //var new_Node = m_doubleNodeListPool.GetNodeInstance(new_Data);//new DoubleLinkedNode<T>(new_Data);
       //var new_Node = new DoubleLinkedNode<T>(new_Data);
-      var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
+      //var new_Node = m_doubleNodeArrayPool.GetNodeInstance(new_Data);
+      var new_Node = m_doubleNodeListPool.GetNode(new_Data);
 
       if(_IsEmpty()){
         m_first = m_last = new_Node;
@@ -335,12 +337,12 @@ namespace Game.Scripts.CSharp.Link {
       return this.GetEnumerator();
     }
   }
-
-
+  
   public class DoubleLinkedNode<T> {
     private DoubleLinkedNode<T> m_next      = null;
     private DoubleLinkedNode<T> m_previous  = null;
     private T                   m_data      = default(T);
+    private bool                m_isDelete  = false;
 
     public DoubleLinkedNode() {
       
@@ -371,10 +373,16 @@ namespace Game.Scripts.CSharp.Link {
       set => m_previous = value;
     }
 
+    public bool IsDelete {
+      get => m_isDelete;
+      set => m_isDelete = value;
+    }
+
     public void Clear() {
-      m_data = default(T);
+      m_data = default;
       m_previous = null;
       m_next = null;
+      m_isDelete = default;
     }
   }
 }
