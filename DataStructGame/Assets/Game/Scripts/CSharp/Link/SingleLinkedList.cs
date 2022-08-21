@@ -9,229 +9,89 @@ namespace Game.Scripts.CSharp.Link {
     /// 1. 快速插入首节点
     /// 2. 快速插入尾节点
     /// 3. 提供迭代器
-    /// 4. 由于链表本身对随机访问不友好，就不强行进行遍历查询功能提供
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class SingleLinkedList<T> : IEnumerable<T> {
       private SingleLinkedNode<T> m_first = null;
-      private SingleLinkedNode<T> m_last  = null;
       private int m_length                = 0;
-
-      //private SingleNodeCache<SingleLinkedNode<T>> m_rplaceCache = new SingleNodeCache<SingleLinkedNode<T>>();
+      private SingleNodeListPool<T> m_singlePool = new SingleNodeListPool<T>();
 
 
       public SingleLinkedNode<T> First => m_first;
-      public SingleLinkedNode<T> Last  => m_last;
       public int                Length => m_length;
 
-      /// <summary>
-      /// 链表首位进行插入操作,插入在首节点之前，插入的节点可以通过First获取
-      /// </summary>
-      /// <param name="nodeData">插入的数据内容</param>
-      public void Prepend(T nodeData){
-        if (_CheckNodeDataIsNull(nodeData)) 
-          return;
+      public SingleLinkedNode<T> Add(T data) {
+        if (_CheckNodeDataIsNull(data))
+          return null;
 
-        var new_Node = new SingleLinkedNode<T>(nodeData);
-
-        if (_IsEmpty()){
-          m_first = m_last = new_Node;
-        } else {
-          var replaceNode = m_first;
-          m_first         = new_Node;
-          new_Node.Next   = replaceNode;
-        }
-
-        m_length++;
-      }
-
-      /// <summary>
-      /// 链表末位添加的，插入在末尾节点，插入节点可以通过Last获取
-      /// </summary>
-      /// <param name="nodeData">插入的数据内容</param>
-      public void Append(T nodeData){
-        if (_CheckNodeDataIsNull(nodeData)) 
-          return;
-
-        var new_Node = new SingleLinkedNode<T>(nodeData);
-
+        var new_Node = m_singlePool.GetNode(data);
+        
         if (_IsEmpty()) {
-          m_first = m_last = new_Node;
-        } else {
-          var replaceNode  = m_last;
-          m_last           = new_Node;
-          replaceNode.Next = new_Node;
+          m_first = new_Node;
         }
 
         m_length++;
-      }
-
-      /// <summary>
-      /// 插入已知目标节点的next位置
-      /// </summary>
-      /// <param name="new_Data">新数据</param>
-      /// <param name="targetNode">目标节点</param>
-      /// <returns>返回插入的节点信息</returns>
-      public SingleLinkedNode<T> InsertAtTargetNodeNext(T new_Data, SingleLinkedNode<T> targetNode) {
-        if (_CheckNodeDataIsNull(new_Data) && _CheckNodeIsNull(targetNode))
-          return null;
-        
-        var new_Node = _InsertAtNodeNext(targetNode,new_Data);
         
         return new_Node;
       }
 
-      /// <summary>
-      /// 插入对应数据节点的next位置
-      /// </summary>
-      /// <param name="new_Data">新数据</param>
-      /// <param name="targetData">目标节点数据</param>
-      /// <returns></returns>
-      public SingleLinkedNode<T> InsertAtTargetDataNext(T new_Data, T targetData) {
-        if (_CheckNodeDataIsNull(new_Data) && _CheckNodeDataIsNull(targetData)) 
-          return null;
+      public bool Delete(T data) {
+        var result = false;
+        if (_IsEmpty() || _CheckNodeDataIsNull(data))
+          return false;
+
+        var delNode = GetNodeByData(data);
+        var delPreNode = GetPreNodeByData(data);
         
-        var targetNode = _GetNode(m_first,targetData);
-        
-        var new_Node = _InsertAtNodeNext(targetNode,new_Data);
-
-        return new_Node;
-      }
-
-      /// <summary>
-      /// 插入已知目标节点的pre位置
-      /// </summary>
-      /// <param name="new_Data">新数据</param>
-      /// <param name="targetNode">目标节点</param>
-      /// <returns></returns>
-      public SingleLinkedNode<T> InsertAtTargetNodePre(T new_Data, SingleLinkedNode<T> targetNode) {
-        if (_CheckNodeDataIsNull(new_Data) && _CheckNodeIsNull(targetNode))
-          return null;
-
-        var new_Node = _InsertAtNodePre(targetNode, new_Data);
-
-        return new_Node;
-      }
-
-      /// <summary>
-      /// 插入已知目标节点的pre位置
-      /// </summary>
-      /// <param name="new_Data">新数据</param>
-      /// <param name="targetData">目标节点信息</param>
-      /// <returns></returns>
-      public SingleLinkedNode<T> InsertAtTargetDataPre(T new_Data, T targetData) {
-        if (_CheckNodeDataIsNull(new_Data) && _CheckNodeDataIsNull(targetData)) 
-          return null;
-        
-        var targetNode = _GetNode(m_first,targetData);
-        
-        var new_Node = _InsertAtNodePre(targetNode,new_Data);
-
-        return new_Node;
-      }
-
-      /// <summary>
-      /// 去除单链表首部内容
-      /// </summary>
-      /// <returns>返回删除前的First</returns>
-      public SingleLinkedNode<T> DeleteFirstNode() {
-        SingleLinkedNode<T> resultNode = m_first;
-
-        if (!_IsEmpty()) {
-          if (m_length == 1) {
-            m_first = m_last = null;
-            resultNode = null;
-          }
-          else {
-            m_first = m_first.Next;
+        if (m_singlePool.DeleteNode(delNode, delPreNode)) {
+          if (delPreNode == null) {
+            m_first = m_singlePool.First;
           }
           m_length--;
-        }
-        else {
-          resultNode = null;
+          result = true;
         }
 
-        return resultNode;
+        return result;
       }
 
-      /// <summary>
-      /// 删除单链表尾部内容
-      /// </summary>
-      /// <returns>返回删除前的last</returns>
-      public SingleLinkedNode<T> DeleteLastNode() {
-        SingleLinkedNode<T> resultNode = m_last;
-        if (_IsEmpty())
+      public SingleLinkedNode<T> GetNodeByData(T data) {
+        if (_IsEmpty() || _CheckNodeDataIsNull(data))
           return null;
-        
-        var preNodeFromLastNode = _GetPreNode(m_first, m_last.Data);
-        
-        if (preNodeFromLastNode == null) {
-          m_first = m_last = null;
-          resultNode = null;
-        }
-        else {
-          m_last = preNodeFromLastNode;
+
+        var currentNode = m_first;
+        while (currentNode.Next != null) {
+          if (currentNode.Data.Equals(data)) {
+            return currentNode;
+          }
+          currentNode = currentNode.Next;
         }
 
-        m_length--;
-        return resultNode;
+        return null;
       }
 
-      /// <summary>
-      /// 根据已知的节点进行删除
-      /// </summary>
-      /// <param name="targetNode">需要删除的节点</param>
-      /// <returns>返回删除的节点内容</returns>
-      public SingleLinkedNode<T> DeleteAtTargetNode(SingleLinkedNode<T> targetNode) {
-        if (_CheckNodeIsNull(targetNode))
+      public SingleLinkedNode<T> GetPreNodeByData(T data) {
+        if (_IsEmpty() || _CheckNodeDataIsNull(data)) {
+          Debug.LogAssertion("The data is firstData, can`t get preData");
           return null;
-        
-        var preNodeFromDeleteNode = _GetPreNode(m_first, targetNode.Data);
-        preNodeFromDeleteNode.Next = targetNode.Next;
-
-        return targetNode;
-      }
-
-      /// <summary>
-      /// 根据已知的节点数据进行删除
-      /// </summary>
-      /// <param name="targetData">目标节点数据</param>
-      /// <returns>返回删除的节点信息</returns>
-      public SingleLinkedNode<T> DeleteAtTargetData(T targetData) {
-        if (_CheckNodeDataIsNull(targetData))
-          return null;
-
-        var deleteNode = _GetNode(m_first, targetData);
-
-        if (deleteNode != null) {
-          var preNodeFromDeleteNode = _GetPreNode(m_first, targetData);
-          preNodeFromDeleteNode.Next = deleteNode.Next;
         }
 
-        return deleteNode;
-      }
-      
-
-      /// <summary>
-      /// 获取前置的节点内容
-      /// </summary>
-      /// <param name="node"></param>
-      /// <returns></returns>
-      public SingleLinkedNode<T> GetPreNode(SingleLinkedNode<T> node) {
-        if (_CheckNodeIsNull(node))
+        if (m_first.Data.Equals(data))
           return null;
 
-        var preNode = _GetPreNode(m_first,node.Data);
+        var currentNode = m_first;
+        while (currentNode.Next != null) {
+          if (currentNode.Next.Data.Equals(data))
+            return currentNode;
+          currentNode = currentNode.Next;
+        }
 
-        if (_CheckNodeIsNull(preNode))
-          return null;
-        return preNode;
+        return null;
       }
 
       public void Clear(){
         m_first  = null;
-        m_last   = null;
         m_length = 0;
+        m_singlePool = null;
       }
 
       public void PrintAll() {
@@ -248,103 +108,22 @@ namespace Game.Scripts.CSharp.Link {
         return (m_length == 0);
       }
 
-      /// <summary>
-      /// 插入替换方法,插入在目标节点的next位置
-      /// </summary>
-      /// <param name="targetNode">目标节点</param>
-      /// <param name="new_Data"></param>
-      private SingleLinkedNode<T> _InsertAtNodeNext(SingleLinkedNode<T> targetNode, T new_Data) {
-        if (_CheckNodeIsNull(targetNode) || _CheckNodeDataIsNull(new_Data))
-          return null;
-
-        var new_Node = new SingleLinkedNode<T>(new_Data);
-        
-        if (targetNode.Equals(m_last)) {
-          Append(new_Node.Data);
-          new_Node = m_last;
-        }
-        else {
-          var replaceNode = targetNode;
-          targetNode.Next = new_Node;
-          new_Node.Next   = replaceNode.Next.Next;
-          //清空replacenode
-          replaceNode     = null;
-        }
-
-        return new_Node;
-      }
-
-      /// <summary>
-      /// 插入替换方法,插入在目标节点的pre位置
-      /// </summary>
-      /// <param name="targetNode">目标节点</param>
-      /// <param name="new_Data">新数据</param>
-      /// <returns></returns>
-      private SingleLinkedNode<T> _InsertAtNodePre(SingleLinkedNode<T> targetNode, T new_Data) {
-        if (_CheckNodeIsNull(targetNode) || _CheckNodeDataIsNull(new_Data))
-          return null;
-        var preNodeFromTargetNode = _GetPreNode(m_first, targetNode.Data);
-
-        return _InsertAtNodeNext(preNodeFromTargetNode, new_Data);
-      }
-
-      /// <summary>
-      /// 通过一个节点数据获取该节点整体信息方法
-      /// </summary>
-      /// <param name="startNode">开始遍历查询的节点</param>
-      /// <param name="targetData">目标节点数据</param>
-      /// <returns></returns>
-      private SingleLinkedNode<T> _GetNode(SingleLinkedNode<T> startNode, T targetData) {
-        if (_CheckNodeDataIsNull(startNode.Data) || _CheckNodeDataIsNull(targetData))
-          return null;
-        var current = startNode;
-
-        while (current != null) {
-          if (current.Data.Equals(targetData))
-            return current;
-          current = current.Next;
-        }
-
-        return null;
-      }
-
-      /// <summary>
-      /// 获取该节点的前面节点
-      /// </summary>
-      /// <param name="startNode">开始遍历查询的节点</param>
-      /// <param name="targetNode">目标节点</param>
-      /// <returns></returns>
-      private SingleLinkedNode<T> _GetPreNode(SingleLinkedNode<T> startNode, T targetData) {
-        if (_CheckNodeDataIsNull(startNode.Data) || _CheckNodeDataIsNull(targetData))
-          return null;
-        
-        var current = startNode;
-
-        while (current != null) {
-          if (current.Next.Data.Equals(targetData))
-            return current;
-          current = current.Next;
-        }
-
-        return null;
-      }
-
       private bool _CheckNodeDataIsNull(T nodeData) {
         if (nodeData == null) {
-          Debug.LogAssertion("The node is null");
-          return false;
+          Debug.LogAssertion("The nodeData is null");
+          return true;
         }
 
-        return true;
+        return false;
       }
       
       private bool _CheckNodeIsNull(SingleLinkedNode<T> node) {
         if (node == null) {
           Debug.LogAssertion("The node is null");
-          return false;
+          return true;
         }
 
-        return true;
+        return false;
       }
 
       /*******************************迭代器实现****************************************/
@@ -411,6 +190,11 @@ namespace Game.Scripts.CSharp.Link {
         public SingleLinkedNode<T> Next {
           get => m_next;
           set => m_next = value;
+        }
+
+        public void Clear() {
+          m_data = default;
+          m_next = null;
         }
     }
     
