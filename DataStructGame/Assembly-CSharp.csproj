@@ -54,9 +54,12 @@
   <ItemGroup>
      <Compile Include="Assets\Game\Scripts\Common\CSharp\Common.cs" />
      <Compile Include="Assets\Game\Scripts\Game.cs" />
-     <Compile Include="Assets\Game\Scripts\CSharp\Link\DoubleLinkedList.cs" />
      <Compile Include="Assets\Game\Scripts\CSharp\Link\SingleLinkedList.cs" />
      <Compile Include="Assets\Game\Scripts\CSharp\Array\Array.cs" />
+     <Compile Include="Assets\Game\Scripts\Common\CSharp\SingleNodeListPool.cs" />
+     <Compile Include="Assets\Game\Scripts\Common\CSharp\CachePool.cs" />
+     <Compile Include="Assets\Game\Scripts\CSharp\Link\DlinkedList.cs" />
+     <Compile Include="Assets\Game\Scripts\Common\CSharp\NodeArrayPool.cs" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.12f1c1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
